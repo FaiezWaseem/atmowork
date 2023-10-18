@@ -13,6 +13,10 @@ mongoose.connect('mongodb://127.0.0.1:27017/atmowork')
 
 app.use("/public",express.static(path.join(__dirname , 'public')))
 app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended : true }))
+
+
 app.get('/' , (req , res)=>{
     res.send('Working')
 })

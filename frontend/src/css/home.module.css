@@ -13,14 +13,52 @@
 .btnText {
     font-family: 'Itim', cursive;
 }
-.fontstyle{
+
+.fontstyle {
     font-family: 'Itim', cursive;
 }
+
 .TriangleBg {
     background: url('../../public/assets/images/Rectangle.png');
     background-size: cover;
 }
+
 .TriangleBgLeft {
     background: url('../../public/assets/images/Rectangle_left.png');
     background-size: cover;
+}
+
+.pricingBg {
+    background: linear-gradient(180deg, #E2CCF8 0%, rgba(217, 217, 217, 0.00) 100%);
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+}
+
+.roundHobby {
+    border-radius: 50%;
+    border: 21px solid rgba(94, 87, 178, 0.13);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.roundStandard {
+    border-radius: 50%;
+    border: 21px solid rgba(102, 180, 185, 0.18);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-100);
+}
+
+.roundPremium {
+    border-radius: 50%;
+    border: 21px solid rgba(177, 89, 99, 0.13);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footerSignUp {
+    background: url('../../public/assets/images/bgPurple.png'), lightgray 50% / cover no-repeat;
+    height: 400px;
 }

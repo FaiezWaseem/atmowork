@@ -13,8 +13,8 @@ import Header from '@/components/layout/header';
 import styles from '../src/css/home.module.css'
 import { Trans } from 'react-i18next';
 import Card from '@/components/home/card';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from 'react-responsive-carousel';
+import Pricing from '@/components/home/pricing';
+import Footer from '@/components/footer';
 
 
 const IndexPage = () => {
@@ -227,14 +227,36 @@ const IndexPage = () => {
         <Center marginY={10} padding={8}>
           <Heading  >WorkSpace for any project Big or Small</Heading>
         </Center>
-        <HStack flexWrap={useBreakpointValue({ base : 'wrap' , lg : 'nowrap' })}  
-         overflowX={'scroll'}
-         
-          >
+        <HStack flexWrap={useBreakpointValue({ base: 'wrap', lg: 'nowrap' })} >
           <Card />
           <Card />
           <Card />
         </HStack>
+        <Pricing />
+        <Center className={styles.footerSignUp} >
+          <Stack>
+
+            <Text
+              marginTop={useBreakpointValue({ base: 10, lg: 0 })}
+              textAlign={'center'}
+              as={'h1'}
+              fontSize={useBreakpointValue({ base: 18, lg: 32 })}
+              fontWeight={'bold'}
+              color={'white'}
+            >
+              Get Started
+            </Text>
+            <HStack marginTop={5} >
+              <Input placeholder='Email' bgColor={'white'} /> <Button
+                minW={100}
+                bg={'app.btnPurple'}
+                color={'white'}
+                className={styles.btnText}
+              >SignUp</Button>
+            </HStack>
+          </Stack>
+        </Center>
+        <Footer />
       </Stack>
     </PageLayout>
   );
