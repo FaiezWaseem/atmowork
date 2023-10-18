@@ -120,7 +120,9 @@ const DesktopNav = () => {
                 _hover={{
                   textDecoration: 'none',
                   color: linkHoverColor,
-                }}>
+                }}
+                suppressHydrationWarning
+                >
                 <Trans i18nKey={navItem.label}  >
                   {navItem.label}
                 </Trans>

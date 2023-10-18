@@ -34,12 +34,13 @@ const IndexPage = () => {
               as={'h1'}
               fontSize={useBreakpointValue({ base: 18, lg: 22 })}
               fontWeight={'bold'}
+              suppressHydrationWarning 
             >
               <Trans i18nKey={'homeText'} >
                 Your All in One Project Management Software
               </Trans>
             </Text>
-            <Text marginTop={5} width={useBreakpointValue({ base: '90%', lg: '70%' })} color={'gray.500'} >Replace all the hassel and focus more on your work.
+            <Text suppressHydrationWarning marginTop={5} width={useBreakpointValue({ base: '90%', lg: '70%' })} color={'gray.500'} >Replace all the hassel and focus more on your work.
               <Trans i18nKey={'homeBody'} >
                 Brings all your tasks, teammates,
                 and tools together.
@@ -123,7 +124,7 @@ const IndexPage = () => {
             </Text>
           </Stack>
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
-            <img src='./assets/images/team.gif' alt='KanBan' width={useBreakpointValue({
+            <img src='./assets/images/team.png' alt='KanBan' width={useBreakpointValue({
               base: '200px',
               md: '300px',
               lg: '400px'
@@ -132,7 +133,7 @@ const IndexPage = () => {
         </HStack>
         <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })} >
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
-            <img src='./assets/images/search_mind.gif' alt='KanBan' width={useBreakpointValue({
+            <img src='./assets/images/mind.png' alt='KanBan' width={useBreakpointValue({
               base: '200px',
               md: '300px',
               lg: '400px'

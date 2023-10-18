@@ -1,3 +1,4 @@
+'use client'
 import { availableLanguages } from '@/internationalization/i18n';
 import {
   Box,
@@ -15,7 +16,7 @@ const LanguagesButton = () => {
   return (
     <Box>
       <Menu>
-        <MenuButton as={Button} colorScheme='brand'>
+        <MenuButton as={Button} colorScheme='brand'  >
           {i18n.language.toUpperCase()}
         </MenuButton>
         <MenuList minW='fit-content'>
@@ -24,6 +25,7 @@ const LanguagesButton = () => {
               key={lang}
               isDisabled={i18n.language === lang ? true : false}
               onClick={() => i18n.changeLanguage(lang)}
+              suppressHydrationWarning
             >
               {lang.toUpperCase()}
             </MenuItem>
