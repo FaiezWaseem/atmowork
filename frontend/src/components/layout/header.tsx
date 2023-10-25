@@ -17,6 +17,7 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  HStack,
 } from '@chakra-ui/react'
 import {
   HamburgerIcon,
@@ -24,11 +25,24 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons'
+import { useRouter } from 'next/router';
 import styles from '../../css/home.module.css'
+import { useCookies } from "react-cookie";
+import api from '@/utils/fetcher';
+import { useEffect } from 'react';
 
 export default function Header() {
   const { isOpen, onToggle } = useDisclosure()
-
+  const router = useRouter()
+  const [cookies, removeCookie] = useCookies();
+  
+  // working fine
+  // useEffect(()=>{
+  //   api.get('/api/user/')
+  //   .then(res => console.log(res.data))
+  //   .catch(console.error)
+  // },[])
+  
   return (
     <Box className={styles.headerbg} >
       <Flex
@@ -76,7 +90,23 @@ export default function Header() {
           direction={'row'}
           spacing={6}>
           <LanguagesButton />
-          <Button
+          {cookies.token && <Button
+            as={'a'}
+            display={{ base: 'none', md: 'inline-flex' }}
+            fontSize={'sm'}
+            fontWeight={600}
+            cursor={'pointer'}
+            color={'white'}
+            bg={'app.btnPurple'}
+            onClick={() => {
+              router.push("/dashboard")
+            }}
+            _hover={{
+              bg: 'purple.700',
+            }}>
+            DashBoard &#8594;
+          </Button>}
+          {!cookies.token && <Button
             as={'a'}
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
@@ -84,11 +114,14 @@ export default function Header() {
             color={'white'}
             bg={'app.btnPurple'}
             href={'#'}
+            onClick={() => {
+              router.push("/register")
+            }}
             _hover={{
               bg: 'purple.700',
             }}>
             Get Started &#8594;
-          </Button>
+          </Button>}
         </Stack>
       </Flex>
 
@@ -122,7 +155,7 @@ const DesktopNav = () => {
                   color: linkHoverColor,
                 }}
                 suppressHydrationWarning
-                >
+              >
                 <Trans i18nKey={navItem.label}  >
                   {navItem.label}
                 </Trans>

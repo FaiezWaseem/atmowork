@@ -44,7 +44,10 @@ function PriceWrapper(props: Props) {
   )
 }
 
-export default () => {
+interface PricingProps {
+  onClick? : Function
+}
+export default function Pricing(props : PricingProps) {
   return (
     <Box py={16} className={styles.pricingBg}  >
       <VStack spacing={2} textAlign="center">
@@ -106,7 +109,9 @@ export default () => {
               </ListItem>
             </List>
             <Box w="80%" pt={7}>
-              <Button w="full" colorScheme="purple" variant="outline">
+              <Button w="full" colorScheme="purple" variant="outline" onClick={()=>{
+                props.onClick('Hobby')
+              }} >
                 Start
               </Button>
             </Box>
@@ -154,7 +159,9 @@ export default () => {
               </ListItem>
             </List>
             <Box w="80%" pt={7}>
-              <Button w="full" colorScheme="purple" >
+              <Button w="full" colorScheme="purple" onClick={()=>{
+                props.onClick('Standard')
+              }}  >
                 Start
               </Button>
             </Box>
@@ -204,7 +211,9 @@ export default () => {
               </ListItem>
             </List>
             <Box w="80%" pt={7}>
-              <Button w="full" colorScheme="purple" variant="outline">
+              <Button w="full" colorScheme="purple" variant="outline" onClick={()=>{
+                props.onClick('Premium')
+              }}  >
                 Start
               </Button>
             </Box>

@@ -4,7 +4,11 @@ const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 const path = require('path')
 const cors = require('cors')
+const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 8001;
+
+const AuthRouter = require('./routes/AuthRoute')
+const UserRouter = require('./routes/UserRoutes')
 
 
 mongoose.connect('mongodb://127.0.0.1:27017/atmowork')
@@ -12,13 +16,17 @@ mongoose.connect('mongodb://127.0.0.1:27017/atmowork')
 .catch(err => console.log('MongoDB Connection Failed' , err))
 
 app.use("/public",express.static(path.join(__dirname , 'public')))
-app.use(cors())
+app.use(cookieParser())
+app.use(cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }))
 app.use(express.json())
 app.use(express.urlencoded({ extended : true }))
 
+app.use('/api/auth',AuthRouter)
+app.use('/api/user' , UserRouter)
 
-app.get('/' , (req , res)=>{
-    res.send('Working')
-})
 
 app.listen(PORT , ()=> console.log(`Listening on http://localhost:${PORT}`))

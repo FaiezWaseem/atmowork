@@ -1,6 +1,6 @@
 import { Card, CardBody, Stack, Text, useBreakpointValue } from "@chakra-ui/react";
 import { BsFolder2 } from "react-icons/bs";
-export default () => {
+export default function CardAbout(){
     return <Card
         width={useBreakpointValue({ base: 280, xsm : 200 , md: 350, lg: 400 })}
         margin={10} >
