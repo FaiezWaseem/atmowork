@@ -27,12 +27,14 @@ const variants: Variants = {
 type PageProps = {
   title: string;
   description?: string;
+  logo?: string;
+  fav?: string;
   children: ReactNode;
 };
 
 const MotionContainer = motion<ContainerProps>(Container);
 
-const PageLayout = ({ title, description, children }: PageProps) => {
+const PageLayout = ({ title, description, logo , fav, children }: PageProps) => {
   return (
     <>
       <NextSeo
@@ -49,7 +51,7 @@ const PageLayout = ({ title, description, children }: PageProps) => {
           locale: 'en_US',
           images: [
             {
-              url: './logo_transparent.png',
+              url:  logo ?? './logo_transparent.png',
               width: 1200,
               height: 630,
               alt: 'Atmowork',
@@ -60,7 +62,7 @@ const PageLayout = ({ title, description, children }: PageProps) => {
         additionalLinkTags={[
           {
             rel: 'icon',
-            href: './favicon.png',
+            href:  fav ?? './favicon.png',
           },
         ]}
       />

@@ -1,4 +1,3 @@
-export {}
 const mongo = require('mongoose')
 
 const MemberShipSchema = new mongo.Schema({

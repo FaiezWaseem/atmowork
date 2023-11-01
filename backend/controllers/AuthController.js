@@ -1,4 +1,4 @@
-export { }
+
 const UserModel = require('../models/UserModel')
 const MemberShipModel = require('../models/MemberShipModel')
 const jwt = require('jsonwebtoken')
@@ -83,9 +83,9 @@ class AuthController {
             }, { idempotencyKey: vKey })
                 .then(async (result) => {
                     console.log(result)
-                    const start_date: Date = new Date();
+                    const start_date = new Date();
                     start_date.setMonth(start_date.getMonth() + 1);
-                    const end_date: Date = start_date;
+                    const end_date = start_date;
 
                     const memberShip = await MemberShipModel.create({
                         start_date: new Date(),

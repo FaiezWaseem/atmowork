@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { useRouter } from 'next/router'
+import { Router, useRouter } from 'next/router'
 import {
   IconButton,
   Avatar,
@@ -22,7 +22,8 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-  Image
+  Image,
+  useToast
 } from '@chakra-ui/react'
 import {
   FiHome,
@@ -152,19 +153,31 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   //@ts-ignore
   const user = useUser((state) => state?.users)
 
-  React.useEffect(() => {
+  const router = useRouter()
 
+  const toast = useToast()
+
+  React.useEffect(() => {
     if (!user.username) {
       api.get('/api/user/')
         .then(res => {
-          if(res.data.status){
+          if (res.data.status) {
             console.log(res.data)
             setUser(res.data.user)
-          }else{
-               alert('Error')
+          } else {
+            router.replace('/')
+            console.log(res.data)
           }
         })
         .catch(console.error)
+    }else if(user.membership_plan_id === undefined){
+      toast({
+        title : 'Payment Plan Not Purchased | Freemium Account',
+        description : 'Need To Purchase a Plan',
+        duration : 6000,
+        position : 'top',
+        status : 'error'
+      })
     }
   }, [])
 
@@ -257,7 +270,7 @@ const SideBar = ({ children }: SideBarProps) => {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} bg={'white'} >
+      <Box ml={{ base: 0, md: 60 }} minH={'85vh'} bg={'white'} >
         {children}
       </Box>
     </Box>

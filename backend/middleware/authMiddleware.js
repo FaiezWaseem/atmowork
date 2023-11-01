@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
     const token = req.cookies.token
-    console.log(token)
     if (!token) {
         return res.json({ status: false , message : 'User Not Authorized'  })
     }
@@ -11,7 +10,6 @@ const verifyToken = (req, res, next) => {
         if (err) {
             return res.status(401).json({ status: false , message : 'User Not Authorized' })
         } else {
-            console.log(data)
             req.user = data.id
             next()
         }

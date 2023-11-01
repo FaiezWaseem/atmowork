@@ -36,13 +36,6 @@ export default function Header() {
   const router = useRouter()
   const [cookies, removeCookie] = useCookies();
   
-  // working fine
-  // useEffect(()=>{
-  //   api.get('/api/user/')
-  //   .then(res => console.log(res.data))
-  //   .catch(console.error)
-  // },[])
-  
   return (
     <Box className={styles.headerbg} >
       <Flex
@@ -107,15 +100,13 @@ export default function Header() {
             DashBoard &#8594;
           </Button>}
           {!cookies.token && <Button
-            as={'a'}
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
             fontWeight={600}
             color={'white'}
             bg={'app.btnPurple'}
-            href={'#'}
             onClick={() => {
-              router.push("/register")
+              router.push("/signin")
             }}
             _hover={{
               bg: 'purple.700',

@@ -1,4 +1,3 @@
-export {}
 const mongo = require('mongoose')
 
 const UserSchema = new mongo.Schema({

@@ -1,8 +1,10 @@
-import { Center, Stack, HStack, Text } from '@chakra-ui/react'
+import { Center, Stack, HStack, Text , useToast } from '@chakra-ui/react'
 import Stripe from 'react-stripe-checkout';
 import useUser from '@/providers/userStore';
 import api from '@/utils/fetcher';
 import styles from "../../../src/css/signin.module.css"
+import { useRouter } from 'next/router';
+
 
 export default function PaymentScreen() {
     //@ts-ignore
@@ -11,7 +13,8 @@ export default function PaymentScreen() {
     const amount = plans[user.plan];
     const title = `${user.plan} Plan`;
     const description = `${user.plan} Plan of ${amount}$/month Charge`;
-    console.log(user)
+    const router = useRouter();
+    const toast = useToast();
     const email = user.email;
     const handleToken = (token) => {
         try {
@@ -20,9 +23,26 @@ export default function PaymentScreen() {
                 token: token.id,
                 plan: user.plan,
             })
-                .then(res => { if (res.data) console.log(res.data) })
+                .then(res => { if (res.data) {
+                    const { data }= res;
+                    if(data.status === "succeeded"){
+                       router.push('/home/dashboard')
+                    }else{
+                     toast({
+                        title : 'Payment Failed',
+                        duration : 5000,
+                        isClosable : false
+                     })
+                    }
+                }})
 
         } catch (error) {
+            toast({
+                title : 'Payment Failed',
+                description : error.message,
+                duration : 5000,
+                isClosable : false
+             })
             console.log(error)
         }
     }
