@@ -99,7 +99,7 @@ export default function Header() {
             color={'white'}
             bg={'app.btnPurple'}
             onClick={() => {
-              router.push("/dashboard")
+              router.push("/dashboard/home")
             }}
             _hover={{
               bg: 'purple.700',

@@ -30,7 +30,7 @@ class AuthController {
             res.cookie("token", token, {
                 withCredentials: true,
                 httpOnly: false,
-                maxAge: this.expiresIn30days
+                maxAge: 2592000000
             });
             res
                 .status(201)
@@ -44,25 +44,25 @@ class AuthController {
         try {
             const { email, password } = req.body;
             if (!email || !password) {
-                return res.json({ message: 'All fields are required' })
+                return res.json({ message: 'All fields are required' , success: false, })
             }
             const user = await UserModel.findOne({ email });
             if (!user) {
-                return res.json({ message: 'Incorrect password or email' })
+                return res.json({ message: 'Email Doesn`t Exists' , success: false, })
             }
             const auth = await bcrypt.compare(password, user.password)
             if (!auth) {
-                return res.json({ message: 'Incorrect password or email' })
+                return res.json({ message: 'Incorrect password or email' , success: false, })
             }
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' })
             res.cookie("token", token, {
                 withCredentials: true,
                 httpOnly: false,
-                maxAge: this.expiresIn30days
+                maxAge: 2592000000
             });
             res.status(201).json({ message: "User logged in successfully", success: true, user });
         } catch (error) {
-            res.status(201).json({ message: "User logged in successfully", success: false });
+            res.status(201).json({ message: "User login Failed "+error.message, success: false });
         }
     }
     async pay(req, res) {

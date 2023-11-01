@@ -33,7 +33,7 @@ export default function SignIn() {
                 position: 'top'
             })
             console.log(response.data)
-            router.push('/')
+            router.push('/dashboard/home')
         }else{
             setLoading(false)
             toast({
