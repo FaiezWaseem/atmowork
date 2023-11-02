@@ -9,6 +9,8 @@ import { useRouter } from 'next/router';
 export default function PaymentScreen() {
     //@ts-ignore
     const user = useUser((state) => state.users)
+    //@ts-ignore
+    const setUser = useUser((state) => state.setUser)
     const plans = { 'Hobby': 5, 'Standard': 15, 'Premium': 30 }
     const amount = plans[user.plan];
     const title = `${user.plan} Plan`;
@@ -26,7 +28,8 @@ export default function PaymentScreen() {
                 .then(res => { if (res.data) {
                     const { data }= res;
                     if(data.status === "succeeded"){
-                       router.push('/home/dashboard')
+                        setUser(null)
+                       router.push('/dashboard/home/')
                     }else{
                      toast({
                         title : 'Payment Failed',

@@ -57,21 +57,11 @@ export default function Goals() {
     }
     const CreateGoal = async () => {
         try {
-            if (title.length < 10) {
+            if (title.length < 5) {
                 toast({
                     duration: 3000,
                     title: 'Empty Feilds',
-                    description: 'Title Length Should be greater than 10',
-                    position: 'top',
-                    status: 'warning'
-                })
-                return;
-            }
-            if (description.length < 20) {
-                toast({
-                    duration: 3000,
-                    title: 'Empty Feilds',
-                    description: 'Description Length Should be greater than 20',
+                    description: 'Title Length Should be greater than 5',
                     position: 'top',
                     status: 'warning'
                 })
@@ -110,7 +100,7 @@ export default function Goals() {
         logo='../logo_transparent.png'
         fav='../favicon.png'
     >
-        <Stack width={'100vw'} gap={0}>
+        <Stack width={'98.5vw'} gap={0}>
             <SideBar>
                 <HStack justifyContent={'end'} padding={1}>
                     <Button leftIcon={<AiOutlinePlus />} colorScheme='purple' variant='solid' onClick={onOpen} >

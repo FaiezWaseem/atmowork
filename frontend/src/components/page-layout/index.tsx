@@ -68,12 +68,10 @@ const PageLayout = ({ title, description, logo , fav, children }: PageProps) => 
       />
       <MotionContainer
         display='flex'
-        maxW='container.lg'
         minH={{ base: 'auto', md: '100vh' }}
         initial='hidden'
         animate='enter'
         exit='exit'
-        variants={variants}
         centerContent
       >
         {children}

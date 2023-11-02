@@ -18,13 +18,8 @@ class AuthController {
             if (isExist) {
                 res.json({ message: 'Email Already Exist', "success": false, })
             }
-            const hashPassword = await bcrypt.hash(req.body.password, 10);
-            const user = await UserModel.create({
-                email: req.body.email,
-                username: req.body.username,
-                password: hashPassword,
-                account_type: req.body.account_type
-            });
+           
+            const user = await UserModel.create(req.body);
             const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' })
             console.log(token)
             res.cookie("token", token, {
@@ -44,15 +39,15 @@ class AuthController {
         try {
             const { email, password } = req.body;
             if (!email || !password) {
-                return res.json({ message: 'All fields are required' , success: false, })
+                return res.json({ message: 'All fields are required', success: false, })
             }
             const user = await UserModel.findOne({ email });
             if (!user) {
-                return res.json({ message: 'Email Doesn`t Exists' , success: false, })
+                return res.json({ message: 'Email Doesn`t Exists', success: false, })
             }
             const auth = await bcrypt.compare(password, user.password)
             if (!auth) {
-                return res.json({ message: 'Incorrect password or email' , success: false, })
+                return res.json({ message: 'Incorrect password or email', success: false, })
             }
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' })
             res.cookie("token", token, {
@@ -62,13 +57,12 @@ class AuthController {
             });
             res.status(201).json({ message: "User logged in successfully", success: true, user });
         } catch (error) {
-            res.status(201).json({ message: "User login Failed "+error.message, success: false });
+            res.status(201).json({ message: "User login Failed " + error.message, success: false });
         }
     }
     async pay(req, res) {
-        const plans = { 'Hobby': 5, 'Standard': 15, 'Premium': 30 }
+        const plans = { 'Hobby': process.env.Hobby, 'Standard': process.env.Standard, 'Premium': process.env.Premium };
         const { plan, token, email } = req.body;
-        console.log(plan, plans[plan])
         console.log('pay wall requested')
         const vKey = uuidv4()
         return stripe.customers.create({
@@ -117,7 +111,7 @@ class AuthController {
         try {
             res.clearCookie('token');
             res.json({ message: 'Logged Out', status: true })
-            
+
         } catch (error) {
             res.json({ message: 'LogOut Failed', status: false })
         }

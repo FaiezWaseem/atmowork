@@ -166,11 +166,18 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             setUser(res.data.user)
           } else {
             router.replace('/')
-            console.log(res.data)
+            toast({
+              title : 'Error ',
+              description : res.data?.message,
+              duration : 6000,
+              position : 'top',
+              status : 'error'
+            })
           }
         })
         .catch(console.error)
     }else if(user.membership_plan_id === undefined){
+      console.log(user)
       toast({
         title : 'Payment Plan Not Purchased | Freemium Account',
         description : 'Need To Purchase a Plan',

@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Center, Text, HStack, Radio, RadioGroup, Input, InputGroup, InputRightElement, Button, useBreakpointValue } from "@chakra-ui/react";
+import { Stack, Center, Text, HStack, Radio, RadioGroup, Input, Image, InputGroup, InputRightElement, Button, useBreakpointValue } from "@chakra-ui/react";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import styles from '../../src/css/signin.module.css'
 import { Carousel } from 'react-responsive-carousel';
@@ -237,10 +237,7 @@ const CarousalCard = () => {
     return <Stack padding={8} bgColor={'#AE50CF'} borderRadius={8}  >
         <Text color={'white'} width={'100%'} >“Productivity is being able to do things that you were never able to do before.”</Text>
         <HStack>
-            <img src="../assets/images/user_icon.png" alt="avatar" style={{
-                width: '40px !important',
-                height: '40px !important',
-            }} />
+            <Image src="../assets/images/user_icon.png" alt="avatar" w={'40px !important'} h={'40px !important'}  />
             <Stack>
                 <Text lineHeight={0.7} color={'white'} >Antony .Jr</Text>
                 <Text color={'white'} >CEO at abc</Text>
