@@ -64,7 +64,7 @@ const IndexPage = () => {
         </HStack>
 
 
-        <Center marginY={10} >
+        <Center marginY={10} id='product' >
           <Heading  >Productivity With Ease</Heading>
         </Center>
 
@@ -225,7 +225,7 @@ const IndexPage = () => {
             </Text>
           </Stack>
         </HStack>
-        <Center marginY={10} padding={8}>
+        <Center marginY={10} padding={8} id='solution' >
           <Heading  >WorkSpace for any project Big or Small</Heading>
         </Center>
         <HStack flexWrap={useBreakpointValue({ base: 'wrap', lg: 'nowrap' })} >
@@ -245,7 +245,7 @@ const IndexPage = () => {
               fontWeight={'bold'}
               color={'white'}
             >
-              Get Started
+              Subscribe To NewsLetter
             </Text>
             <HStack marginTop={5} >
               <Input placeholder='Email' bgColor={'white'} /> <Button
@@ -253,7 +253,7 @@ const IndexPage = () => {
                 bg={'app.btnPurple'}
                 color={'white'}
                 className={styles.btnText}
-              >SignUp</Button>
+              >Subscribe</Button>
             </HStack>
           </Stack>
         </Center>

@@ -49,7 +49,7 @@ interface PricingProps {
 }
 export default function Pricing(props : PricingProps) {
   return (
-    <Box py={16} className={styles.pricingBg}  >
+    <Box py={16} className={styles.pricingBg}  id='pricing' >
       <VStack spacing={2} textAlign="center">
         <Heading as="h1" fontSize="4xl">
           Plans that fit your need

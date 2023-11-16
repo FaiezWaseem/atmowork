@@ -82,7 +82,6 @@ export default function Header() {
           justify={'flex-end'}
           direction={'row'}
           spacing={6}>
-          <LanguagesButton />
           {cookies.token && <Button
             as={'a'}
             display={{ base: 'none', md: 'inline-flex' }}
@@ -293,23 +292,23 @@ const NAV_ITEMS: Array<NavItem> = [
   // },
   {
     label: 'Solution',
-    href: '#',
+    href: '#solution',
   },
   {
     label: 'Features',
-    href: '#',
+    href: '#features',
   },
   {
     label: 'Product',
-    href: '#',
+    href: '#product',
   },
   {
     label: 'Pricing',
-    href: '#',
+    href: '#pricing',
   },
   {
     label: 'Clients',
-    href: '#',
+    href: '#clients',
   },
 ]
 
