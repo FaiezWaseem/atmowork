@@ -1,4 +1,3 @@
-
 const UserModel = require('../models/UserModel')
 const MemberShipModel = require('../models/MemberShipModel')
 const jwt = require('jsonwebtoken')

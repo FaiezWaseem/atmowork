@@ -114,7 +114,7 @@ export default function Goals() {
                     </Stack>
                 </Center>}
                 <Flex flexWrap={'wrap'} justify={'space-evenly'} >
-                    {goals.map(goal => <GoalCard goal={goal} />)}
+                    {goals.map(goal => <GoalCard goal={goal} key={goal._id} />)}
                 </Flex>
                 <Modal
                     initialFocusRef={initialRef}

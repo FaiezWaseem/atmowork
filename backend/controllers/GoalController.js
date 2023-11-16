@@ -45,7 +45,7 @@ class GoalController {
     }
     async deleteGoal(req, res) {
         try {
-            const result  = await GoalsModel.deleteOne({ _id : req.params.id} );
+            const result  = await GoalsModel.deleteOne({ _id : req.params.id , userid : req.user} );
             console.log(result)
             res.json({
                 status : result.deletedCount ? true : false,
