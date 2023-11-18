@@ -29,13 +29,17 @@ import { useRouter } from 'next/router';
 import styles from '../../css/home.module.css'
 import { useCookies } from "react-cookie";
 import api from '@/utils/fetcher';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Header() {
   const { isOpen, onToggle } = useDisclosure()
   const router = useRouter()
   const [cookies, removeCookie] = useCookies();
-  
+  const [client , setClient] = useState(false);
+  useEffect(()=>{
+      setClient(true)
+  },[])
+
   return (
     <Box className={styles.headerbg} >
       <Flex
@@ -82,7 +86,7 @@ export default function Header() {
           justify={'flex-end'}
           direction={'row'}
           spacing={6}>
-          {cookies.token && <Button
+          {(cookies.token && client) ? <Button
             as={'a'}
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
@@ -90,6 +94,7 @@ export default function Header() {
             cursor={'pointer'}
             color={'white'}
             bg={'app.btnPurple'}
+            suppressHydrationWarning
             onClick={() => {
               router.push("/dashboard/home")
             }}
@@ -97,8 +102,7 @@ export default function Header() {
               bg: 'purple.700',
             }}>
             DashBoard &#8594;
-          </Button>}
-          {!cookies.token && <Button
+          </Button> : <Button
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
             fontWeight={600}
@@ -109,7 +113,9 @@ export default function Header() {
             }}
             _hover={{
               bg: 'purple.700',
-            }}>
+            }} 
+            suppressHydrationWarning 
+            >
             Get Started &#8594;
           </Button>}
         </Stack>

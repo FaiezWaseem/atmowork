@@ -20,6 +20,10 @@ const FeaturesSchema = new mongo.Schema({
         ref : 'user',
         required : [true , 'Creator is Required!!']
     },
+    assigned : {
+        type : mongo.Types.ObjectId,
+        ref : 'user',
+    },
     status : {
         type : String,
         enum : ['todo','inprogress','review','done'],

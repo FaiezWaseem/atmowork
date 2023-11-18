@@ -72,7 +72,6 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Notifications', icon: FiBell, link: '/dashboard/notification' },
   { name: 'MindMap', icon: FiCompass, link: '/dashboard/mindmap' },
   { name: 'Goals', icon: FiStar, link: '/dashboard/goals' },
-  { name: 'kanban', icon: BsFillKanbanFill, link: '/dashboard/kanban' },
   { name: 'meet', icon: FiCamera, link: '/dashboard/meet' },
   { name: 'setting', icon: FiSettings, link: '/dashboard/setting' },
   { name: 'logout', icon: FiLogOut, link: '/dashboard/logout' },
@@ -158,7 +157,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const toast = useToast()
 
   React.useEffect(() => {
-    if (!user.username) {
+    if (!user?.username) {
       api.get('/api/user/')
         .then(res => {
           if (res.data.status) {

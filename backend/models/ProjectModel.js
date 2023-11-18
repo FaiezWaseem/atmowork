@@ -24,7 +24,13 @@ const ProjectSchema = new mongo.Schema({
     features: [{
         type : mongo.Types.ObjectId,
         ref : 'features',
-    }]
+    }],
+    start_date : {
+        type : Date,
+    },
+    end_date : {
+        type : Date
+    }
 })
 
 ProjectSchema.set('timestamps', true)

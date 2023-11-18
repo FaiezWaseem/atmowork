@@ -7,7 +7,7 @@ class ProjectController {
 
     async getProjects(req, res) {
         try {
-            const projects = await ProjectModel.find({ creatorid: req.user }).populate(['creatorid','members','features']).sort('asc');
+            const projects = await ProjectModel.find({ creatorid: req.user }).populate(['creatorid', 'members', 'features']).sort('asc');
             res.json({ status: true, projects })
         } catch (error) {
             res.json({ status: false, message: error.message })
@@ -39,11 +39,11 @@ class ProjectController {
             })
         }
     }
-    
+
     async createFeature(req, res) {
         try {
             const feature = await FeatureModel.create({ ...req.body, creatorid: req.user });
-            res.json({ status : true , feature})
+            res.json({ status: true, feature })
         } catch (error) {
             res.json({
                 status: false,
@@ -51,10 +51,10 @@ class ProjectController {
             })
         }
     }
-    async getFeatures(req , res){
+    async getFeatures(req, res) {
         try {
-            const features = await FeatureModel.find({ project_id : req.params.projectid })
-            res.json({ status : true , features})
+            const features = await FeatureModel.find({ project_id: req.params.projectid })
+            res.json({ status: true, features })
         } catch (error) {
             res.json({
                 status: false,
@@ -62,14 +62,16 @@ class ProjectController {
             })
         }
     }
-    async updateFeature(req , res){
+    async updateFeature(req, res) {
         try {
-            
+          const response =  await FeatureModel.updateOne({ _id: req.params.id, creatorid: req.user } , { $set : req.body} , { new : true});
+          console.log(response);
+          res.json({ status : true , message  : 'updated ' , response})
         } catch (error) {
-            
+
         }
     }
-    async deleteFeature(req , res){
+    async deleteFeature(req, res) {
         try {
             const result = await FeatureModel.deleteOne({ _id: req.params.id, creatorid: req.user });
             console.log(result)

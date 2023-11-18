@@ -12,18 +12,18 @@ export default function PaymentScreen() {
     //@ts-ignore
     const setUser = useUser((state) => state.setUser)
     const plans = { 'Hobby': 5, 'Standard': 15, 'Premium': 30 }
-    const amount = plans[user.plan];
-    const title = `${user.plan} Plan`;
-    const description = `${user.plan} Plan of ${amount}$/month Charge`;
+    const amount = plans[user?.plan];
+    const title = `${user?.plan} Plan`;
+    const description = `${user?.plan} Plan of ${amount}$/month Charge`;
     const router = useRouter();
     const toast = useToast();
-    const email = user.email;
+    const email = user?.email;
     const handleToken = (token) => {
         try {
             api.post('/api/auth/stripe-pay', {
                 email,
-                token: token.id,
-                plan: user.plan,
+                token: token?.id,
+                plan: user?.plan,
             })
                 .then(res => { if (res.data) {
                     const { data }= res;
