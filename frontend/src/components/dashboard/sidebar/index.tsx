@@ -42,6 +42,8 @@ import { BsFillKanbanFill } from 'react-icons/bs'
 import { IconType } from 'react-icons'
 import api from '@/utils/fetcher'
 import useUser from '@/providers/userStore'
+import { useCookies } from 'react-cookie'
+
 
 interface LinkItemProps {
   name: string
@@ -156,6 +158,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
   const toast = useToast()
 
+  const [,setCookie] = useCookies()
+
   React.useEffect(() => {
     if (!user?.username) {
       api.get('/api/user/')
@@ -166,23 +170,38 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           } else {
             router.replace('/')
             toast({
-              title : 'Error ',
-              description : res.data?.message,
-              duration : 6000,
-              position : 'top',
-              status : 'error'
+              title: 'Error ',
+              description: res.data?.message,
+              duration: 6000,
+              position: 'top',
+              status: 'error'
             })
           }
         })
-        .catch(console.error)
-    }else if(user.membership_plan_id === undefined){
+        .catch((err) => {
+          if (err.response.data) {
+            if (!err.response.data.status) {
+              router.replace('/')
+              toast({
+                title: 'Error ',
+                description: err.response.data?.message,
+                duration: 6000,
+                position: 'top',
+                status: 'error'
+              })
+              setCookie('token','')
+            }
+          }
+          console.log('err', err)
+        })
+    } else if (user.membership_plan_id === undefined) {
       console.log(user)
       toast({
-        title : 'Payment Plan Not Purchased | Freemium Account',
-        description : 'Need To Purchase a Plan',
-        duration : 6000,
-        position : 'top',
-        status : 'error'
+        title: 'Payment Plan Not Purchased | Freemium Account',
+        description: 'Need To Purchase a Plan',
+        duration: 6000,
+        position: 'top',
+        status: 'error'
       })
     }
   }, [])
