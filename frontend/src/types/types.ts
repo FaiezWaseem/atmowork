@@ -19,7 +19,7 @@ export interface projectType {
     updatedAt : Date,
     start_date? : Date,
     end_date? : Date,
-    _id : String ,
+    _id : string ,
     creatorid : UserType
 }
 export interface featuresProps {
@@ -31,6 +31,6 @@ export interface featuresProps {
     createdAt : String,  
     start_date? : Date,
     end_date? : Date,
-    _id : String ,
+    _id : string ,
     creatorid : UserType
 }

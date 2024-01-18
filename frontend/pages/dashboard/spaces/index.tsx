@@ -139,7 +139,7 @@ export default function Home() {
                     </Thead>
                     <Tbody>
                         {projects.map(project => {
-                            return <Tr>
+                            return <Tr key={project._id} >
                                 <Td> <Link href={`/dashboard/kanban/${project._id}`} onClick={(e) => {
                                     e.preventDefault();
                                     router.push(`/dashboard/kanban/${project._id}`)

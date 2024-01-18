@@ -1,13 +1,16 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Stack, Badge, Flex, Text, Tooltip, VStack, HStack, useToast } from '@chakra-ui/react'
+import { Stack, Badge, Flex, Text, Tooltip, VStack, HStack, useToast, IconButton } from '@chakra-ui/react'
 import { Button, Input, Avatar } from "@chakra-ui/react";
 import SideBar from '@/components/dashboard/sidebar/index'
 import {
     DndContext,
     useDroppable,
     rectIntersection,
-    useDraggable
+    useDraggable,
+    useSensors,
+    useSensor,
+    PointerSensor
 } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { useParams } from 'next/navigation';
@@ -15,7 +18,8 @@ import api from '@/utils/fetcher';
 import { MdFlag } from "react-icons/md"
 import { featuresProps, projectType } from '@/types/types';
 import { useRouter } from 'next/router';
-
+import { SingleDatepicker } from "chakra-dayzed-datepicker";
+import { ImBin } from "react-icons/im";
 
 export default function Kanban() {
     const params = useParams();
@@ -45,14 +49,14 @@ export default function Kanban() {
         'Todo': 'todo',
         'InProgress': 'inprogress',
         'Done': 'done',
-        
-        'todo' : 'Todo',
-        'inprogress' : 'InProgress',
-        'done' : 'Done'
+
+        'todo': 'Todo',
+        'inprogress': 'InProgress',
+        'done': 'Done'
     }
 
     const addNewCard = async (feat, type) => {
-        const response = await api.post(`/api/user/feature`, { ...feat, status: status[type], project_id : params.id})
+        const response = await api.post(`/api/user/feature`, { ...feat, status: status[type], project_id: params.id })
         if (response.data.status) {
             if (type === 'Todo') {
                 setTodoItems([...todoItems, response.data.feature]);
@@ -61,13 +65,13 @@ export default function Kanban() {
             } else {
                 setDoneItems([...doneItems, response.data.feature]);
             }
-        }else{
+        } else {
             toast({
-                title : 'Error',
-                description : response.data.message,
-                position : 'top',
-                duration : 4000,
-                isClosable : false
+                title: 'Error',
+                description: response.data.message,
+                position: 'top',
+                duration: 4000,
+                isClosable: false
             })
         }
     };
@@ -78,33 +82,53 @@ export default function Kanban() {
 
     const loadFeatures = async () => {
         const response = await api.get(`/api/user/features/${params?.id}`);
-        if(response.data.status){
-            const { features  } : { features : Array<featuresProps>} = response.data;
-            features.map( feature => {
-                console.log(feature , status[feature.status])
+        if (response.data.status) {
+            const { features }: { features: Array<featuresProps> } = response.data;
+            features.map(feature => {
+                console.log(feature, status[feature.status])
                 if (status[feature.status] === 'Todo') {
-                    setTodoItems((old) =>[...old, {...feature}]);
+                    setTodoItems((old) => [...old, { ...feature }]);
                 } else if (status[feature.status] === 'InProgress') {
-                    setInProgressItems((old) =>[...old, {...feature}]);
+                    setInProgressItems((old) => [...old, { ...feature }]);
                 } else {
-                    setDoneItems((old) =>[...old, {...feature}]);
+                    setDoneItems((old) => [...old, { ...feature }]);
                 }
             })
         }
     }
 
-    const updateFeatureStatus = async (item : projectType , type : String) =>{
-           const response = await api.put(`/api/user/feature/${item._id}` , {  status : type});
-           console.log(response.data)
+    const updateFeatureStatus = async (item: projectType, type: String) => {
+        const response = await api.put(`/api/user/feature/${item._id}`, { status: type });
+        console.log(response.data)
     }
 
+    const removeCard = async (_id : string) => {
+          console.log(_id)
+          const { data } = await api.delete(`/api/user/feature/${_id}`)
+          if(data.status){
+            setTodoItems(todoItems.filter(item => item._id !== _id ))
+            setInProgressItems(inProgressItems.filter(item => item._id !== _id ))
+            setDoneItems(doneItems.filter(item => item._id !== _id ))
+          }
+    }
 
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+          activationConstraint: {
+            distance: 8,
+          },
+        })
+      )
+      
     return <Stack>
         <SideBar>
 
             <DndContext
                 collisionDetection={rectIntersection}
+                sensors={sensors}
                 onDragEnd={(e) => {
+
+                    console.log(e)
 
                     const container = e.over?.id;
                     const item = e.active.data.current?.item || "";
@@ -151,6 +175,7 @@ export default function Kanban() {
                                 items={items}
                                 color={color}
                                 addNewCard={addNewCard}
+                                removeCard={removeCard}
                             />
                         ))}
                     </Flex>
@@ -169,6 +194,10 @@ const AddCard = ({ addCard }) => {
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+
+    const dateInitial = new Date()
+    const [start_date, setStartDate] = useState(dateInitial);
+    const [end_date, setEndDate] = useState(dateInitial);
 
 
     return (
@@ -195,6 +224,19 @@ const AddCard = ({ addCard }) => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
+                <br />
+                <Flex>
+                    <SingleDatepicker
+                        name="start date"
+                        date={start_date}
+                        onDateChange={setStartDate}
+                    />
+                    <SingleDatepicker
+                        name="End Date"
+                        date={end_date}
+                        onDateChange={setEndDate}
+                    />
+                </Flex>
 
                 <Button
                     ml={1}
@@ -202,7 +244,7 @@ const AddCard = ({ addCard }) => {
                     colorScheme='gray'
                     color={'gray.500'}
                     onClick={() => {
-                        addCard({ title, description });
+                        addCard({ title, description, start_date, end_date });
                         setTitle("");
                         setDescription("")
                     }}
@@ -214,7 +256,7 @@ const AddCard = ({ addCard }) => {
     )
 }
 
-const KanbanLane = ({ title, items, color, addNewCard }) => {
+const KanbanLane = ({ title, items, color, addNewCard, removeCard }) => {
 
     const { setNodeRef } = useDroppable({
         id: title,
@@ -255,7 +297,13 @@ const KanbanLane = ({ title, items, color, addNewCard }) => {
             >
                 {items.map((item, index) => (
 
-                    <KanbanCard key={index} title={item.title} item={item} index={index} parent={title} />
+                    <KanbanCard key={index}
+                        title={item.title}
+                        item={item}
+                        index={index}
+                        parent={title}
+                        removeCard={removeCard}
+                    />
                 ))}
 
                 <Button onClick={() => setShow(!show)}
@@ -272,7 +320,14 @@ const KanbanLane = ({ title, items, color, addNewCard }) => {
     )
 }
 
-const KanbanCard = ({ title, index, parent, item  } : { item : featuresProps , parent : String , title : String , index : Number}) => {
+interface KanbanCardType {
+    item: featuresProps,
+    parent: String,
+    title: String,
+    index: Number,
+    removeCard: (_id : string) => void
+}
+const KanbanCard = ({ title, index, parent, item, removeCard }: KanbanCardType) => {
 
     // @ts-ignore
     const { attributes, listeners, setNodeRef, transform, transition } = useDraggable({
@@ -308,9 +363,6 @@ const KanbanCard = ({ title, index, parent, item  } : { item : featuresProps , p
             w={300}
             maxH={120}
             justifyContent="center"
-            onClick={() => {
-                console.log(item)
-            }}
         >
             <VStack width={'80%'}>
                 <Text fontSize={14} width={'100%'} textAlign={'start'} fontWeight={'medium'} >{item.title}</Text>
@@ -320,11 +372,18 @@ const KanbanCard = ({ title, index, parent, item  } : { item : featuresProps , p
                     <Text width={'100%'} fontSize={12} color={'gray.400'} >{`${item?.start_date ? new Date(item?.start_date).toLocaleDateString() : 'nill'} - ${item?.end_date ? new Date(item?.end_date).toLocaleDateString() : 'nill'}`}</Text>
                 </HStack>
             </VStack>
-            <HStack width={'20%'} justifyContent={'end'} cursor={'pointer'} >
+            <VStack width={'20%'} justifyContent={'end'} cursor={'pointer'} >
                 <Tooltip label={item?.creatorid?.username} >
                     <Avatar size='xs' name='Add' src='https://bit.ly/dan-a' />
                 </Tooltip>
-            </HStack>
+                <IconButton
+                    icon={<ImBin color='red' aria-label='test' />}
+                    aria-label=''
+                    onClick={() => {
+                        removeCard(item._id)
+                    }}
+                />
+            </VStack>
         </Flex>
     )
 }

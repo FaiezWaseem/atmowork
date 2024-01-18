@@ -166,7 +166,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         .then(res => {
           if (res.data.status) {
             console.log(res.data)
-            setUser(res.data.user)
+            setUser({...res.data , ...res.data.user })
           } else {
             router.replace('/')
             toast({

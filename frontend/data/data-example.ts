@@ -1,6 +1,5 @@
-import { TypeExample } from '@/types/type-example';
 
-export const dataExample: TypeExample[] = [
+export const dataExample = [
   {
     id: '1',
     name: 'Example 1',

@@ -18,7 +18,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/atmowork')
 app.use("/public",express.static(path.join(__dirname , 'public')))
 app.use(cookieParser())
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000",],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }))
