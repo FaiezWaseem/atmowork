@@ -5,15 +5,18 @@ import styles from '../../src/css/signin.module.css'
 import { Carousel } from 'react-responsive-carousel';
 import api from "@/utils/fetcher";
 import { useToast } from '@chakra-ui/react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import useUser from "@/providers/userStore";
 import Pricing from "@/components/home/pricing";
+
 
 
 export default function Register() {
     //@ts-ignore
     const setUser = useUser((state) => state?.setUser)
     const router = useRouter()
+    const params = useSearchParams()
+
     const [show, setShow] = React.useState(false)
     const handleClick = () => setShow(!show)
     const [account_type, setAccountType] = React.useState('')
@@ -22,7 +25,7 @@ export default function Register() {
     const [password, setPassword] = React.useState('')
     const [cpassword, setCPassword] = React.useState('')
     const [isLoading, setLoading] = React.useState(false)
-    const [plan, setPlan] = React.useState(null)
+    const [plan, setPlan] = React.useState(params.get('plan'))
 
     const toast = useToast()
     const onSubmit = async () => {

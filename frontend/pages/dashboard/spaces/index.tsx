@@ -9,9 +9,17 @@ import {
     Td,
     Link,
     TableContainer,
+    Menu,
+    MenuList,
+    MenuItem,
+    MenuButton,
+    IconButton
 } from '@chakra-ui/react'
 import SideBar from '@/components/dashboard/sidebar/index'
 import { MdFlag, MdAdd, MdCalendarMonth } from "react-icons/md"
+import { AiOutlinePlus, AiFillDelete } from 'react-icons/ai'
+import { GoKebabHorizontal } from 'react-icons/go'
+import { CiEdit } from 'react-icons/ci'
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import api from '@/utils/fetcher'
 import {
@@ -147,11 +155,27 @@ export default function Home() {
                                 <Td onClick={() => console.log(project)}>{project.start_date ? new Date(project.start_date).toLocaleDateString() : 'nill'}</Td>
                                 <Td>{project.end_date ? new Date(project.end_date).toLocaleDateString() : 'nill'}</Td>
                                 <Td>{project.creatorid.username}</Td>
-                                <Td>  <Button colorScheme='red' variant='outline'
-                                    onClick={() => deleteProject(project._id)}
-                                >
-                                    Remove
-                                </Button></Td>
+                                <Td>
+                                    <Menu>
+                                        <MenuButton
+                                            as={IconButton}
+                                            aria-label='Options'
+                                            icon={<GoKebabHorizontal />}
+                                            variant='outline'
+                                        />
+                                        <MenuList>
+                                            <MenuItem icon={<CiEdit />}>
+                                                Edit
+                                            </MenuItem>
+                                            <MenuItem icon={<CiEdit />}>
+                                                Team
+                                            </MenuItem>
+                                            <MenuItem icon={<AiFillDelete />} color={'red'} onClick={() => deleteProject(project._id)} >
+                                                Delete
+                                            </MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                </Td>
                             </Tr>
                         })}
 

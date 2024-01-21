@@ -1,5 +1,5 @@
 import React from 'react'
-import { Stack } from '@chakra-ui/react'
+import { Stack , Heading} from '@chakra-ui/react'
 import SideBar from '@/components/dashboard/sidebar/index'
 import { useCookies } from 'react-cookie'
 import { useRouter } from 'next/router'
@@ -17,7 +17,7 @@ export default function Home() {
     }, [])
     return <Stack>
         <SideBar>
-            <h1>Signin.. Out</h1>
+            <Heading  m={8} color='red' >Signing.. Out</Heading>
         </SideBar>
     </Stack>
 }

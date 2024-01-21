@@ -13,7 +13,7 @@ import PageLayout from '@/components/page-layout'
 import useUser from '@/providers/userStore'
 
 export default function Goals() {
-    const [goals, setGoals] = React.useState([]);
+    const [goals, setGoals] = React.useState<Array<any>>([]);
     const { isOpen, onOpen, onClose } = useDisclosure()
     //@ts-ignore
     const user = useUser((state)=> state?.users)
@@ -114,7 +114,48 @@ export default function Goals() {
                     </Stack>
                 </Center>}
                 <Flex flexWrap={'wrap'} justify={'space-evenly'} >
-                    {goals.map(goal => <GoalCard goal={goal} key={goal._id} />)}
+                    {goals.map(goal => <GoalCard goal={goal} key={goal._id}
+                    deleteGoal={async ()=>{
+
+                            try {
+                    
+                                const response = await api.delete(`/api/user/goal/${goal._id}`)
+                                const { data } = response;
+                                if (data.status) {
+                                    toast({
+                                        title: 'Success!',
+                                        description: data.message,
+                                        duration: 5000,
+                                        status: 'success',
+                                        isClosable: false,
+                                        position: 'top'
+                                    })
+
+                                    setGoals(goals.filter( g => g._id !==  goal._id))
+                                } else {
+                                    toast({
+                                        title: 'Oops Something Went Wrong!!',
+                                        description: data.message,
+                                        duration: 5000,
+                                        status: 'error',
+                                        isClosable: false,
+                                        position: 'top'
+                                    })
+                                }
+                            } catch (error) {
+                                toast({
+                                    title: 'Oops Something Went Wrong!!',
+                                    description: error.message,
+                                    duration: 5000,
+                                    status: 'error',
+                                    isClosable: false,
+                                    position: 'top'
+                                })
+                    
+                            }
+                        
+                    }}
+                    />)}
                 </Flex>
                 <Modal
                     initialFocusRef={initialRef}
@@ -153,45 +194,10 @@ export default function Goals() {
 }
 
 
-const GoalCard = ({ goal }) => {
+const GoalCard = ({ goal , deleteGoal }) => {
 
     const toast = useToast();
-    const deleteGoal = async () => {
-        try {
 
-            const response = await api.delete(`/api/user/goal/${goal._id}`)
-            const { data } = response;
-            if (data.status) {
-                toast({
-                    title: 'Success!',
-                    description: data.message,
-                    duration: 5000,
-                    status: 'success',
-                    isClosable: false,
-                    position: 'top'
-                })
-            } else {
-                toast({
-                    title: 'Oops Something Went Wrong!!',
-                    description: data.message,
-                    duration: 5000,
-                    status: 'error',
-                    isClosable: false,
-                    position: 'top'
-                })
-            }
-        } catch (error) {
-            toast({
-                title: 'Oops Something Went Wrong!!',
-                description: error.message,
-                duration: 5000,
-                status: 'error',
-                isClosable: false,
-                position: 'top'
-            })
-
-        }
-    }
 
     return <Stack w={200} h={200} shadow={'md'} margin={2} borderRadius={8}
         _hover={{

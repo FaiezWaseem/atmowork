@@ -15,9 +15,13 @@ import { Trans } from 'react-i18next';
 import Card from '@/components/home/card';
 import Pricing from '@/components/home/pricing';
 import Footer from '@/components/footer';
+import { useRouter } from 'next/navigation';
+import Testimonials from '@/components/home/testomonials';
+
 
 
 const IndexPage = () => {
+  const navigate = useRouter()
   return (
     <PageLayout
       title='Home | AtmoWork'
@@ -52,6 +56,9 @@ const IndexPage = () => {
                 bg={'app.btnPurple'}
                 color={'white'}
                 className={styles.btnText}
+                onClick={()=>{
+                  navigate.push('/signin')
+                }}
               >SignUp</Button>
             </HStack>
           </Stack>
@@ -68,7 +75,9 @@ const IndexPage = () => {
           <Heading  >Productivity With Ease</Heading>
         </Center>
 
-        <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })} >
+        <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })}  
+        id='kanban'
+        >
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
             <img src='./assets/images/kanban_board1.png' alt='KanBan' width={useBreakpointValue({
               base: '200px',
@@ -76,7 +85,9 @@ const IndexPage = () => {
               lg: '400px'
             })} ></img>
           </Center>
-          <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'} >
+          <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'}
+          
+          >
             <Text
               marginTop={useBreakpointValue({ base: 10, lg: 0 })}
               textAlign={'center'}
@@ -99,9 +110,12 @@ const IndexPage = () => {
             </Text>
           </Stack>
         </HStack>
-        <HStack className={styles.TriangleBgLeft} minH={useBreakpointValue({ base: 300, lg: 600 })} >
+        <HStack className={styles.TriangleBgLeft} minH={useBreakpointValue({ base: 300, lg: 600 })} id='Meet' > 
 
-          <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'} >
+          <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'}
+          
+          
+          >
             <Text
               marginTop={useBreakpointValue({ base: 10, lg: 0 })}
               textAlign={'center'}
@@ -131,7 +145,9 @@ const IndexPage = () => {
             })} ></img>
           </Center>
         </HStack>
-        <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })} >
+        <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })}
+        id='MindMap'
+        >
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
             <img src='./assets/images/mind.png' alt='KanBan' width={useBreakpointValue({
               base: '200px',
@@ -233,7 +249,11 @@ const IndexPage = () => {
           <Card />
           <Card />
         </HStack>
-        <Pricing />
+        <Pricing onClick={(plan)=>{
+          console.log(plan)
+          navigate.push('/register?plan='+plan)
+        }} />
+        <Testimonials />
         <Center className={styles.footerSignUp} >
           <Stack>
 

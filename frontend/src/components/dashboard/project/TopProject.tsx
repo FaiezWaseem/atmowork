@@ -16,7 +16,7 @@ export default function TopProjects({ title, list }: any) {
                 <Text ml={2} >{title}</Text>
             </Flex>
             {list.map(item => (
-                <Flex p={3} >
+                <Flex p={3}  key={item._id} >
                     <Text onClick={()=> {
                         router.push('/dashboard/kanban/' + item._id)
                     }} textDecor={'underline'} _hover={{ cursor: 'pointer' }} >{item.title}</Text>

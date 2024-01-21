@@ -161,7 +161,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const [,setCookie] = useCookies()
 
   React.useEffect(() => {
-    if (!user?.username) {
+    console.log(user)
+    if (isEmptyObject(user)) {
       api.get('/api/user/')
         .then(res => {
           if (res.data.status) {
@@ -206,6 +207,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     }
   }, [])
 
+  const isEmptyObject = (obj) => {
+    return obj ? Object.keys(obj).length === 0 : true;
+  };
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -267,7 +271,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem  onClick={()=>{
+                router.replace('/dashboard/logout')
+              }}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

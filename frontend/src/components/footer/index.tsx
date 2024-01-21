@@ -69,19 +69,19 @@ export default function Footer() {
                     </Stack>
                     <Stack align={'flex-start'}>
                         <ListHeader>Features</ListHeader>
-                        <Box as="a" href={'#'}>
+                        <Box as="a" href={'#kanban'}>
                             Kanban
                         </Box>
-                        <Box as="a" href={'#'}>
+                        <Box as="a" href={'#MindMap'}>
                             MindMap
                         </Box>
-                        <Box as="a" href={'#'}>
+                        <Box as="a" href={'#Meet'}>
                             Meet
                         </Box>
-                        <Box as="a" href={'#'}>
+                        <Box as="a" href={'#Meet'}>
                             Team Collaboration
                         </Box>
-                        <Box as="a" href={'#'}>
+                        <Box as="a" href={'#product'}>
                             Project Files
                         </Box>
                     </Stack>
