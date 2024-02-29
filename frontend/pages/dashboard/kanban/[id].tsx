@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Stack, Badge, Flex, Text, HStack, useToast, Button } from '@chakra-ui/react'
+import { Stack, Badge, Flex, Text, HStack, useToast, Tooltip } from '@chakra-ui/react'
 import {
     DndContext,
     useDroppable,
@@ -84,6 +84,9 @@ export default function Kanban() {
     const loadFeatures = async () => {
         const response = await api.get(`/api/user/features/${params?.id}`);
         if (response.data.status) {
+            setTodoItems([])
+            setInProgressItems([])
+            setDoneItems([])
             const { features }: { features: Array<featuresProps> } = response.data;
             features.map(feature => {
                 console.log(feature, status[feature.status])
@@ -143,11 +146,15 @@ export default function Kanban() {
             <HStack>
                 <Wrap>
                     <WrapItem>
-                        <Avatar name={project?.creatorid?.username} src={`https://placehold.co/100x100/FFF/C261D1?text=${project?.creatorid?.username?.charAt(0)}&font=roboto`} />
+                        <Tooltip label={project?.creatorid?.username} >
+                            <Avatar name={project?.creatorid?.username} size={'sm'} src={`https://placehold.co/100x100/FFF/C261D1?text=${project?.creatorid?.username?.charAt(0)}&font=roboto`} />
+                        </Tooltip>
                     </WrapItem>
                     {project && project.members.map(member => {
                         return <WrapItem>
-                            <Avatar name={member.username} src={`https://placehold.co/100x100/FFF/C261D1?text=${member.username.charAt(0)}&font=roboto`} />
+                            <Tooltip label={member.username} >
+                                <Avatar name={member.username} size={'sm'} src={`https://placehold.co/100x100/FFF/C261D1?text=${member.username.charAt(0)}&font=roboto`} />
+                            </Tooltip>
                         </WrapItem>
                     })}
                 </Wrap>
@@ -165,14 +172,14 @@ export default function Kanban() {
             sensors={sensors}
             onDragEnd={(e) => {
 
-                console.log(e)
+      
 
                 const container = e.over?.id;
                 const item = e.active.data.current?.item || "";
                 const index = e.active.data.current?.index || 0;
                 const parent = e.active.data.current?.parent || "Todo";
 
-                console.log(parent, container)
+         
 
                 if (container === "Todo" && (container !== parent)) {
                     setTodoItems([...todoItems, { ...item }]);
@@ -212,6 +219,8 @@ export default function Kanban() {
                             items={items}
                             color={color}
                             removeCard={removeCard}
+                            project={project}
+                            loadFeatures={loadFeatures}
                         />
                     ))}
                 </Flex>
@@ -224,7 +233,7 @@ export default function Kanban() {
 
 
 
-const KanbanLane = ({ title, items, color, removeCard }) => {
+const KanbanLane = ({ title, items, color, removeCard , project , loadFeatures}) => {
 
     const { setNodeRef } = useDroppable({
         id: title,
@@ -272,6 +281,8 @@ const KanbanLane = ({ title, items, color, removeCard }) => {
                         index={index}
                         parent={title}
                         removeCard={removeCard}
+                        project={project}
+                        loadFeatures={loadFeatures}
                     />
                 ))}
 

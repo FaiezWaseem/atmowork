@@ -103,7 +103,7 @@ class ProjectController {
     }
     async getFeatures(req, res) {
         try {
-            const features = await FeatureModel.find({ project_id: req.params.projectid })
+            const features = await FeatureModel.find({ project_id: req.params.projectid }).populate( [ 'creatorid' , 'assigned'] )
             res.json({ status: true, features })
         } catch (error) {
             res.json({

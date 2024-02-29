@@ -1,19 +1,19 @@
 export interface UserType {
     username : string,
-    _id : String ,
+    _id : string ,
     createdAt : Date,
     updatedAt : Date,
-    account_type : String,
-    account_membership : String,
-    membership_plan_id : String | Object,
-    email : String,
+    account_type : string,
+    account_membership : string,
+    membership_plan_id : string | Object,
+    email : string,
 }
 
 export interface projectType {
-    title: String,
-    description: String,
-    features: Array<any>,
-    members : Array<any>,
+    title: string,
+    description: string,
+    features: Array<featuresProps>,
+    members : Array<UserType>,
     space_used : Number,
     createdAt : Date,
     updatedAt : Date,
@@ -23,14 +23,24 @@ export interface projectType {
     creatorid : UserType
 }
 export interface featuresProps {
-    status : String | any,
-    title : String,
-    description : String,
-    project_id : String,
-    updatedAt : String,  
-    createdAt : String,  
+    status : string | any,
+    title : string,
+    description : string,
+    project_id : string,
+    updatedAt : string,  
+    createdAt : string,  
     start_date? : Date,
     end_date? : Date,
     _id : string ,
-    creatorid : UserType
+    creatorid : UserType,
+    assigned : UserType
+}
+export interface KanbanCardType {
+    item: featuresProps,
+    parent: string,
+    title: string,
+    index: number,
+    removeCard: (_id: string) => void,
+    loadFeatures: () => void,
+    project : projectType
 }

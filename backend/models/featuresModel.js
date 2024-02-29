@@ -34,7 +34,14 @@ const FeaturesSchema = new mongo.Schema({
     },
     end_date : {
         type : Date
-    }
+    },
+    assigned : {
+        type : mongo.Types.ObjectId,
+        ref : 'user',
+        default: function() {
+            return this.creatorid;
+        }
+    },
 })
 
 FeaturesSchema.set('timestamps', true)

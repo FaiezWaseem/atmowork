@@ -48,6 +48,9 @@ exports.hasExceededProjectMemberLimit = async (req, projectId) => {
             const project = await Project.findById(projectId)
             if (project) {
                 const existingProjectsCount = project.members.length;
+                if (total_allowed_project  === -1) {
+                    return false;
+                }
                 if (existingProjectsCount >= total_allowed_project) {
                     return true
                 } else {
