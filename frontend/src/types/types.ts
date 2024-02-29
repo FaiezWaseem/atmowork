@@ -1,5 +1,5 @@
 export interface UserType {
-    username : String,
+    username : string,
     _id : String ,
     createdAt : Date,
     updatedAt : Date,

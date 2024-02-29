@@ -7,12 +7,14 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
+
+
 export default function TopProjects({ title, list }: any) {
     const router = useRouter();
     return (
         <Card w={'md'}>
             <Flex bg={'gray.200'} alignItems={'center'} p={3} roundedTop={6} >
-                {/* <MdAccountBox color="orange" fontSize={24} /> */}
+                
                 <Text ml={2} >{title}</Text>
             </Flex>
             {list.map(item => (

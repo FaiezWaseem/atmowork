@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, Center, Text, HStack, useBreakpointValue, Input, InputGroup, InputRightElement, Button } from "@chakra-ui/react";
 import styles from '../../src/css/signin.module.css'
 import { useToast } from "@chakra-ui/react";
 import api from "@/utils/fetcher";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import useUser from "@/providers/userStore";
 
 export default function SignIn() {
     const router = useRouter();
@@ -14,50 +16,128 @@ export default function SignIn() {
     const [password, setPassword] = React.useState('')
     const [isLoading, setLoading] = React.useState(false)
 
-    const Submit = async ()=>{
+    const [message, setMessage] = useState<string | null | undefined>('')
+
+    const { inviteCode } = router.query
+
+        //@ts-ignore
+    const user = useUser((state) => state.users)
+    
+    useEffect(() => {
+       const redirectTo =  checkIfAuthUser()
+       if(redirectTo){
+         router.push(redirectTo)
+       }
+        loadInviteEmail()
+    }, [inviteCode])
+
+    const loadInviteEmail = async () => {
+
+        if (inviteCode) {
+            const { data } = await api.get(`/api/user/project/invite/${inviteCode}`)
+            console.log(data)
+            if (data.status) {
+                setEmail(data.data.email)
+                setMessage('Please Use this email to Signin. Your Project Invite is sent on this email.')
+            } else {
+                toast({
+                    title : 'Invite Code May not be valid',
+                    description : data.message,
+                    position : 'top',
+                    duration : 4000,
+                    status : 'info'
+                })
+            }
+        }
+    }
+
+    const Submit = async () => {
         try {
-        setLoading(true)
-        const response = await api.post('/api/auth/signin', {
-            email,
-            password
-        })
-        const { success, message } = response.data;
-        if(success){
-            setLoading(false)
-            toast({
-                title: 'Account SignedIn',
-                description: message,
-                status: 'success',
-                duration: 6000,
-                isClosable: true,
-                position: 'top'
+            setLoading(true)
+            const response = await api.post('/api/auth/signin', {
+                email,
+                password
             })
-            console.log(response.data)
-            router.push('/dashboard/home')
-        }else{
+            const { success, message } = response.data;
+            if (success) {
+                setLoading(false)
+                toast({
+                    title: 'Account SignedIn',
+                    description: message,
+                    status: 'success',
+                    duration: 6000,
+                    isClosable: true,
+                    position: 'top'
+                })
+                console.log(response.data)
+                router.push('/dashboard/home')
+            } else {
+                setLoading(false)
+                toast({
+                    title: 'Account Invalid',
+                    description: message,
+                    status: 'error',
+                    duration: 6000,
+                    isClosable: true,
+                    position: 'top'
+                })
+            }
+
+        } catch (error) {
             setLoading(false)
             toast({
-                title: 'Account Invalid',
-                description: message,
+                title: 'Account',
+                description: 'Server Crashed',
                 status: 'error',
                 duration: 6000,
                 isClosable: true,
                 position: 'top'
             })
         }
-        
-    } catch (error) {
-        setLoading(false)       
-        toast({
-            title: 'Account',
-            description: 'Server Crashed',
-            status: 'error',
-            duration: 6000,
-            isClosable: true,
-            position: 'top'
-        })
     }
+
+
+
+    const checkIfAuthUser = () => {
+
+        console.log(user)
+
+        if(!user){
+
+            const { inviteCode } = router.query
+            let query = {}
+            
+            if (inviteCode && inviteCode.length > 0 ) {
+                query = { inviteCode }
+                return {
+                    pathname: '/user/invitation',
+                    query: query
+                }
+            }else{
+                return {
+                    pathname : '/',
+                }
+            }
+            
+          
+        }else{
+            return null
+        }
     }
+    const getRegisterPath = () => {
+        const { inviteCode, projectid } = router.query
+        let query = {}
+
+        if (inviteCode && projectid && inviteCode.length > 0 && projectid.length > 0) {
+            query = { inviteCode, projectid }
+        }
+
+        return {
+            pathname: '/register',
+            query: query
+        }
+    }
+
     return <Center className={styles.mainBg} >
 
         <HStack padding={6} bgColor={'white'} borderRadius={8} shadow={'2xl'} minH={'90vh'} minW={useBreakpointValue({ base: '95vw', lg: '70vw' })} >
@@ -75,14 +155,15 @@ export default function SignIn() {
                     <Text lineHeight={0.4} fontSize={26}>Welcome Back,</Text>
                     <Text color={'gray.500'} >Signin to Continue</Text>
                     <Text >Email :</Text>
-                    <Input placeholder='Enter your Email address' value={email} onChange={(e)=> setEmail(e.target.value)} />
+                    <Input placeholder='Enter your Email address' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    {message && <Text color={'GrayText'} fontStyle={'italic'} fontSize={14} >*{message}</Text>}
                     <Text >Password :</Text>
                     <InputGroup size='md'>
                         <Input
                             pr='4.5rem'
                             type={show ? 'text' : 'password'}
                             placeholder='Enter password'
-                            value={password} onChange={(e)=> setPassword(e.target.value)}
+                            value={password} onChange={(e) => setPassword(e.target.value)}
                         />
                         <InputRightElement width='4.5rem'>
                             <Button h='1.75rem' size='sm' onClick={handleClick}>
@@ -95,7 +176,10 @@ export default function SignIn() {
                         <Button isLoading={isLoading} width={200} bgColor={'#934DCA'} color={'white'} onClick={Submit} >Login</Button>
                     </Center>
                     <HStack justifyContent={'center'} >
-                        <Text textAlign={'center'}>New User?</Text><Text as={'a'} href="./register" color={'#934DCA'}>SignIn</Text>
+                        <Text textAlign={'center'}>New User?</Text>
+                        <Link href={getRegisterPath()}>
+                            <Text color={'#934DCA'}>Register</Text>
+                        </Link>
                     </HStack>
                 </Stack>
             </Center>

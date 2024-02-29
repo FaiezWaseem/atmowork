@@ -11,7 +11,7 @@ export default function Home() {
     const setUser = useUser((state) => state.setUser)
     const router = useRouter();
     React.useEffect(() => {
-        setUser({})
+        setUser(null)
         removeCookie('token', '')
         router.replace('/')
     }, [])

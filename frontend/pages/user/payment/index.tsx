@@ -4,6 +4,7 @@ import useUser from '@/providers/userStore';
 import api from '@/utils/fetcher';
 import styles from "../../../src/css/signin.module.css"
 import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 
 
 export default function PaymentScreen() {
@@ -11,6 +12,7 @@ export default function PaymentScreen() {
     const user = useUser((state) => state.users)
     //@ts-ignore
     const setUser = useUser((state) => state.setUser)
+    const params = useSearchParams();
     const plans = { 'Hobby': 5, 'Standard': 15, 'Premium': 30 }
     const amount = plans[user?.plan];
     const title = `${user?.plan} Plan`;
@@ -18,6 +20,10 @@ export default function PaymentScreen() {
     const router = useRouter();
     const toast = useToast();
     const email = user?.email;
+
+    const inviteCode = params.get('inviteCode')
+
+
     const handleToken = (token) => {
         try {
             api.post('/api/auth/stripe-pay', {
@@ -29,7 +35,11 @@ export default function PaymentScreen() {
                     const { data }= res;
                     if(data.status === "succeeded"){
                         setUser(null)
-                       router.push('/dashboard/home/')
+                        if(inviteCode){
+                            router.push('/user/invitation?inviteCode='+inviteCode)
+                        }else{
+                            router.push('/dashboard/home/')
+                        }
                     }else{
                      toast({
                         title : 'Payment Failed',

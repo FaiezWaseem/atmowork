@@ -9,6 +9,8 @@
 .heroBg {
     background: url('../../public/assets/images/hero_bg.png');
     background-position: left;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .btnText {
@@ -62,4 +64,16 @@
 .footerSignUp {
     background: url('../../public/assets/images/bgPurple.png'), lightgray 50% / cover no-repeat;
     height: 400px;
+}
+
+
+
+@media screen and (min-width : 2000px) {
+    .TriangleBgLeft{
+        /* background-image: none; */
+        background-position: left;
+    }
+    .TriangleBg {
+        background-position: right;
+    }
 }

@@ -41,6 +41,7 @@
     "react-responsive-carousel": "^3.2.23",
     "react-stripe-checkout": "^2.6.3",
     "react-use": "^17.4.0",
+    "zod": "^3.22.4",
     "zustand": "^4.4.4"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, Center, Text, HStack, Radio, RadioGroup, Input, Image, InputGroup, InputRightElement, Button, useBreakpointValue } from "@chakra-ui/react";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import styles from '../../src/css/signin.module.css'
@@ -8,7 +8,7 @@ import { useToast } from '@chakra-ui/react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import useUser from "@/providers/userStore";
 import Pricing from "@/components/home/pricing";
-
+import Link from "next/link";
 
 
 export default function Register() {
@@ -17,17 +17,41 @@ export default function Register() {
     const router = useRouter()
     const params = useSearchParams()
 
-    const [show, setShow] = React.useState(false)
+    const [show, setShow] = useState(false)
     const handleClick = () => setShow(!show)
-    const [account_type, setAccountType] = React.useState('')
-    const [username, setUsername] = React.useState('')
-    const [email, setEmail] = React.useState('')
-    const [password, setPassword] = React.useState('')
-    const [cpassword, setCPassword] = React.useState('')
-    const [isLoading, setLoading] = React.useState(false)
-    const [plan, setPlan] = React.useState(params.get('plan'))
+    const [account_type, setAccountType] = useState('')
+    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [cpassword, setCPassword] = useState('')
+    const [isLoading, setLoading] = useState(false)
+    const [plan, setPlan] = useState(params.get('plan'))
 
+    const [message , setMessage ] = useState<string | null | undefined>('')
+
+    const inviteCode = params.get('inviteCode')
+    const projectid = params.get('projectid')
+    
     const toast = useToast()
+    
+    useEffect(()=>{
+        loadInviteEmail()
+    },[plan])
+    
+    const loadInviteEmail =  async () =>{
+        
+        const code = params.get('inviteCode')
+        if(code){
+            const { data  } = await api.get(`/api/user/project/invite/${code}`)
+            console.log(data)
+            if(data.status){
+                setEmail(data.data.email)
+                setMessage('Please Use this email to create a new Account. Your Project Invite is sent on this email.')
+            }else{
+                alert('Cant find Email')
+            }
+        }
+    }
     const onSubmit = async () => {
         try {
             setLoading(true)
@@ -101,7 +125,7 @@ export default function Register() {
             const response = await api.post('/api/auth/register', body)
             const { success, message } = response.data;
             if (success) {
-                setUser({...body , plan})
+                setUser({ ...body, plan })
                 console.log(response.data)
                 setLoading(false)
                 toast({
@@ -112,7 +136,7 @@ export default function Register() {
                     isClosable: true,
                     position: 'top'
                 })
-                router.push('/user/payment', { scroll: false })
+                router.push('/user/payment?inviteCode='+inviteCode+'&projectid='+projectid, { scroll: false   })
             } else {
                 setLoading(false)
                 toast({
@@ -143,6 +167,18 @@ export default function Register() {
             .match(
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             );
+    }
+
+    const getSigninPath = () => {
+        let query = {  }
+
+        if (inviteCode && projectid && inviteCode.length > 0 && projectid.length > 0) {
+            query = { inviteCode, projectid }
+        }
+        return {
+            pathname: '/signin',
+            query: query
+        }
     }
 
     if (plan) {
@@ -191,6 +227,7 @@ export default function Register() {
                         <Input placeholder='Enter a Username' value={username} onChange={(e) => setUsername(e.target.value)} />
                         <Text >Email :</Text>
                         <Input placeholder='Enter your Email address' value={email} onChange={(e) => setEmail(e.target.value)} />
+                         {message && <Text color={'GrayText'} fontStyle={'italic'} fontSize={14} >*{message}</Text>}
                         <Text >Password :</Text>
                         <InputGroup size='md'>
                             <Input
@@ -223,7 +260,10 @@ export default function Register() {
                             <Button width={200} bgColor={'#934DCA'} color={'white'} onClick={onSubmit} isLoading={isLoading} >Register</Button>
                         </Center>
                         <HStack justifyContent={'center'} >
-                            <Text textAlign={'center'}>Existing User?</Text><Text as={'a'} href="./signin" color={'#934DCA'}>SignIn</Text>
+                            <Text textAlign={'center'}>Existing User?</Text>
+                            <Link href={getSigninPath()}>
+                                <Text color={'#934DCA'}>SignIn</Text>
+                            </Link>
                         </HStack>
                     </Stack>
                 </Center>
@@ -240,7 +280,7 @@ const CarousalCard = () => {
     return <Stack padding={8} bgColor={'#AE50CF'} borderRadius={8}  >
         <Text color={'white'} width={'100%'} >“Productivity is being able to do things that you were never able to do before.”</Text>
         <HStack>
-            <Image src="../assets/images/user_icon.png" alt="avatar" w={'40px !important'} h={'40px !important'}  />
+            <Image src="../assets/images/user_icon.png" alt="avatar" w={'40px !important'} h={'40px !important'} />
             <Stack>
                 <Text lineHeight={0.7} color={'white'} >Antony .Jr</Text>
                 <Text color={'white'} >CEO at abc</Text>

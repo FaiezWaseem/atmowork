@@ -38,7 +38,7 @@ const IndexPage = () => {
               as={'h1'}
               fontSize={useBreakpointValue({ base: 18, lg: 22 })}
               fontWeight={'bold'}
-              suppressHydrationWarning 
+              suppressHydrationWarning
             >
               <Trans i18nKey={'homeText'} >
                 Your All in One Project Management Software
@@ -56,7 +56,7 @@ const IndexPage = () => {
                 bg={'app.btnPurple'}
                 color={'white'}
                 className={styles.btnText}
-                onClick={()=>{
+                onClick={() => {
                   navigate.push('/signin')
                 }}
               >SignUp</Button>
@@ -75,8 +75,8 @@ const IndexPage = () => {
           <Heading  >Productivity With Ease</Heading>
         </Center>
 
-        <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })}  
-        id='kanban'
+        <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })}
+          id='kanban'
         >
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
             <img src='./assets/images/kanban_board1.png' alt='KanBan' width={useBreakpointValue({
@@ -86,7 +86,7 @@ const IndexPage = () => {
             })} ></img>
           </Center>
           <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'}
-          
+
           >
             <Text
               marginTop={useBreakpointValue({ base: 10, lg: 0 })}
@@ -110,11 +110,11 @@ const IndexPage = () => {
             </Text>
           </Stack>
         </HStack>
-        <HStack className={styles.TriangleBgLeft} minH={useBreakpointValue({ base: 300, lg: 600 })} id='Meet' > 
+        <HStack className={styles.TriangleBgLeft} minH={useBreakpointValue({ base: 300, lg: 600 })} id='Meet' >
 
           <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'}
-          
-          
+
+
           >
             <Text
               marginTop={useBreakpointValue({ base: 10, lg: 0 })}
@@ -146,7 +146,7 @@ const IndexPage = () => {
           </Center>
         </HStack>
         <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })}
-        id='MindMap'
+          id='MindMap'
         >
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
             <img src='./assets/images/mind.png' alt='KanBan' width={useBreakpointValue({
@@ -244,14 +244,16 @@ const IndexPage = () => {
         <Center marginY={10} padding={8} id='solution' >
           <Heading  >WorkSpace for any project Big or Small</Heading>
         </Center>
-        <HStack flexWrap={useBreakpointValue({ base: 'wrap', lg: 'nowrap' })} >
-          <Card />
-          <Card />
-          <Card />
+
+        {/* WORKSPACE CARDS */}
+        <HStack flexWrap={useBreakpointValue({ base: 'wrap', lg: 'nowrap' })} justify={'center'} >
+          <Card title='Project management' description='Keep tasks in order, deadlines on track, and team members aligned with Atmowork.' />
+          <Card cardBg='teal.300' iconColor='teal' title='Meetings' description='Empower your team meetings to be more productive, empowering, and dare we say—fun.' />
+          <Card cardBg='blue.400' iconColor='blue' title='Brainstorming' description='Unleash your team’s creativity and keep ideas visible, collaborative, and actionable.' />
         </HStack>
-        <Pricing onClick={(plan)=>{
+        <Pricing onClick={(plan) => {
           console.log(plan)
-          navigate.push('/register?plan='+plan)
+          navigate.push('/register?plan=' + plan)
         }} />
         <Testimonials />
         <Center className={styles.footerSignUp} >

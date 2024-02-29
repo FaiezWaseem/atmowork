@@ -1,8 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Stack, Badge, Flex, Text, Tooltip, VStack, HStack, useToast, IconButton } from '@chakra-ui/react'
-import { Button, Input, Avatar } from "@chakra-ui/react";
-import SideBar from '@/components/dashboard/sidebar/index'
+import { Stack, Badge, Flex, Text, HStack, useToast, Button } from '@chakra-ui/react'
 import {
     DndContext,
     useDroppable,
@@ -12,21 +10,23 @@ import {
     useSensor,
     PointerSensor
 } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import { useParams } from 'next/navigation';
 import api from '@/utils/fetcher';
-import { MdFlag } from "react-icons/md"
 import { featuresProps, projectType } from '@/types/types';
-import { useRouter } from 'next/router';
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { ImBin } from "react-icons/im";
+import { Avatar, AvatarBadge, AvatarGroup, Wrap, WrapItem } from '@chakra-ui/react'
+
+import AddMemberModal from '@/components/dashboard/addmember/add-member';
+import AddNewTask from '@/components/dashboard/addtask/add-new-task';
+import KanbanCard from '@/components/dashboard/kanbanCard/kanban-card';
+
+const BoardImg = 'https://images.unsplash.com/photo-1707345512638-997d31a10eaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMzg3Mzl8MXwxfHNlYXJjaHwxfHxuYXR1cmV8ZW58MHwwfHx8MTcwOTA2MzE2Nnww&ixlib=rb-4.0.3&q=80&w=1080'
 
 export default function Kanban() {
     const params = useParams();
-    const router = useRouter();
     const [todoItems, setTodoItems] = useState([]);
     const [doneItems, setDoneItems] = useState([]);
     const [inProgressItems, setInProgressItems] = useState([]);
+    const [project, setProject] = useState<projectType | null>(null)
     const toast = useToast()
     const arrayLanes = [
         {
@@ -78,6 +78,7 @@ export default function Kanban() {
 
     useEffect(() => {
         loadFeatures()
+        loadProjectDetails()
     }, [])
 
     const loadFeatures = async () => {
@@ -96,167 +97,134 @@ export default function Kanban() {
             })
         }
     }
+    const loadProjectDetails = async () => {
+        const { data } = await api.get(`/api/user/project/${params?.id}`);
+        const { status } = data
+        if (status) {
+            setProject(data.project)
+        }
+    }
 
     const updateFeatureStatus = async (item: projectType, type: String) => {
         const response = await api.put(`/api/user/feature/${item._id}`, { status: type });
         console.log(response.data)
     }
 
-    const removeCard = async (_id : string) => {
-          console.log(_id)
-          const { data } = await api.delete(`/api/user/feature/${_id}`)
-          if(data.status){
-            setTodoItems(todoItems.filter(item => item._id !== _id ))
-            setInProgressItems(inProgressItems.filter(item => item._id !== _id ))
-            setDoneItems(doneItems.filter(item => item._id !== _id ))
-          }
+    const removeCard = async (_id: string) => {
+        const { data } = await api.delete(`/api/user/feature/${_id}`)
+        if (data.status) {
+            setTodoItems(todoItems.filter(item => item._id !== _id))
+            setInProgressItems(inProgressItems.filter(item => item._id !== _id))
+            setDoneItems(doneItems.filter(item => item._id !== _id))
+        } else {
+            toast({
+                title: 'Failed To Remove Task',
+                description: data.message,
+                duration: 4000,
+                status: 'error',
+                position: 'top-right'
+            })
+        }
     }
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
-          activationConstraint: {
-            distance: 8,
-          },
+            activationConstraint: {
+                distance: 8,
+            },
         })
-      )
-      
-    return <Stack>
-        <SideBar>
+    )
 
-            <DndContext
-                collisionDetection={rectIntersection}
-                sensors={sensors}
-                onDragEnd={(e) => {
+    return <Stack minH={'100vh'}
+        bgImage={BoardImg}
+        backgroundSize={'cover'}
+    >
+        <HStack p={4} bg={'whiteAlpha.400'} justifyContent={'space-between'} >
+            <HStack>
+                <Wrap>
+                    <WrapItem>
+                        <Avatar name={project?.creatorid?.username} src={`https://placehold.co/100x100/FFF/C261D1?text=${project?.creatorid?.username?.charAt(0)}&font=roboto`} />
+                    </WrapItem>
+                    {project && project.members.map(member => {
+                        return <WrapItem>
+                            <Avatar name={member.username} src={`https://placehold.co/100x100/FFF/C261D1?text=${member.username.charAt(0)}&font=roboto`} />
+                        </WrapItem>
+                    })}
+                </Wrap>
+            </HStack>
+            <HStack>
+                <Text fontSize={'3xl'} fontWeight={'bold'} color={'white'} >{project?.title}</Text>
+            </HStack>
+            <HStack>
+                <AddMemberModal />
+                <AddNewTask addCard={addNewCard} />
+            </HStack>
+        </HStack>
+        <DndContext
+            collisionDetection={rectIntersection}
+            sensors={sensors}
+            onDragEnd={(e) => {
 
-                    console.log(e)
+                console.log(e)
 
-                    const container = e.over?.id;
-                    const item = e.active.data.current?.item || "";
-                    const index = e.active.data.current?.index || 0;
-                    const parent = e.active.data.current?.parent || "Todo";
+                const container = e.over?.id;
+                const item = e.active.data.current?.item || "";
+                const index = e.active.data.current?.index || 0;
+                const parent = e.active.data.current?.parent || "Todo";
 
-                    console.log(parent, container)
+                console.log(parent, container)
 
-                    if (container === "Todo" && (container !== parent)) {
-                        setTodoItems([...todoItems, { ...item }]);
-                    } else if (container === "Done" && (container !== parent)) {
-                        setDoneItems([...doneItems, { ...item }]);
-                    } else if (container === "InProgress" && (container !== parent)) {
-                        setInProgressItems([...inProgressItems, { ...item }]);
+                if (container === "Todo" && (container !== parent)) {
+                    setTodoItems([...todoItems, { ...item }]);
+                } else if (container === "Done" && (container !== parent)) {
+                    setDoneItems([...doneItems, { ...item }]);
+                } else if (container === "InProgress" && (container !== parent)) {
+                    setInProgressItems([...inProgressItems, { ...item }]);
+                }
+                if ((container && parent) && (container !== parent)) {
+                    updateFeatureStatus(item, status[container])
+                    if (parent === "Todo") {
+                        setTodoItems([
+                            ...todoItems.slice(0, index),
+                            ...todoItems.slice(index + 1),
+                        ]);
+                    } else if (parent === "Done") {
+                        setDoneItems([
+                            ...doneItems.slice(0, index),
+                            ...doneItems.slice(index + 1),
+                        ]);
+                    } else {
+                        setInProgressItems([
+                            ...inProgressItems.slice(0, index),
+                            ...inProgressItems.slice(index + 1),
+                        ]);
                     }
-                    if ((container && parent) && (container !== parent)) {
-                        updateFeatureStatus(item, status[container])
-                        if (parent === "Todo") {
-                            setTodoItems([
-                                ...todoItems.slice(0, index),
-                                ...todoItems.slice(index + 1),
-                            ]);
-                        } else if (parent === "Done") {
-                            setDoneItems([
-                                ...doneItems.slice(0, index),
-                                ...doneItems.slice(index + 1),
-                            ]);
-                        } else {
-                            setInProgressItems([
-                                ...inProgressItems.slice(0, index),
-                                ...inProgressItems.slice(index + 1),
-                            ]);
-                        }
-                    }
-                }}
-            >
-                <Flex flexDirection="column">
+                }
+            }}
+        >
+            <Flex flexDirection="column">
 
-                    <Flex flex="3" flexDirection={{ base: 'column', md: 'row', lg: 'row' }}>
-                        {arrayLanes.map(({ title, items, color }, index) => (
-                            <KanbanLane
-                                key={index}
-                                title={title}
-                                items={items}
-                                color={color}
-                                addNewCard={addNewCard}
-                                removeCard={removeCard}
-                            />
-                        ))}
-                    </Flex>
+                <Flex flex="3" flexDirection={{ base: 'column', md: 'row', lg: 'row' }}>
+                    {arrayLanes.map(({ title, items, color }, index) => (
+                        <KanbanLane
+                            key={index}
+                            title={title}
+                            items={items}
+                            color={color}
+                            removeCard={removeCard}
+                        />
+                    ))}
                 </Flex>
-            </DndContext>
-
-
-        </SideBar>
+            </Flex>
+        </DndContext>
     </Stack>
 }
 
 
 
 
-const AddCard = ({ addCard }) => {
 
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-
-    const dateInitial = new Date()
-    const [start_date, setStartDate] = useState(dateInitial);
-    const [end_date, setEndDate] = useState(dateInitial);
-
-
-    return (
-
-        <Flex    >
-
-            <Flex
-                flex="1"
-                bg="white"
-                borderRadius="md"
-                boxShadow="md"
-                flexDirection="column"
-                p={2}
-
-            >
-                <Input
-                    placeholder="Task title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                <br />
-                <Input
-                    placeholder="Task Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
-                <br />
-                <Flex>
-                    <SingleDatepicker
-                        name="start date"
-                        date={start_date}
-                        onDateChange={setStartDate}
-                    />
-                    <SingleDatepicker
-                        name="End Date"
-                        date={end_date}
-                        onDateChange={setEndDate}
-                    />
-                </Flex>
-
-                <Button
-                    ml={1}
-                    mt={2}
-                    colorScheme='gray'
-                    color={'gray.500'}
-                    onClick={() => {
-                        addCard({ title, description, start_date, end_date });
-                        setTitle("");
-                        setDescription("")
-                    }}
-                >
-                    Add Task
-                </Button>
-            </Flex>
-        </Flex>
-    )
-}
-
-const KanbanLane = ({ title, items, color, addNewCard, removeCard }) => {
+const KanbanLane = ({ title, items, color, removeCard }) => {
 
     const { setNodeRef } = useDroppable({
         id: title,
@@ -264,13 +232,13 @@ const KanbanLane = ({ title, items, color, addNewCard, removeCard }) => {
 
     const countItems = items?.length || 0;
 
-    const [show, setShow] = useState(false);
 
     return (
 
-        <Flex flex="3" padding="5" flexDirection="column" minH="10rem" height={
-            countItems > 0 ? "auto" : "10rem"
-        }>
+        <Flex flex="3" padding="5" flexDirection="column" minH="10rem"
+            height={
+                countItems > 0 ? "auto" : "10rem"
+            }>
             <Text
                 textAlign={'center'}
                 fontSize="md"
@@ -281,6 +249,7 @@ const KanbanLane = ({ title, items, color, addNewCard, removeCard }) => {
                 shadow={'md'}
                 fontWeight="bold"
                 mb="2"
+                bg={'#fff'}
             >
                 {title} <Badge>{items?.length}</Badge>
             </Text>
@@ -306,84 +275,9 @@ const KanbanLane = ({ title, items, color, addNewCard, removeCard }) => {
                     />
                 ))}
 
-                <Button onClick={() => setShow(!show)}
-                    marginTop={5} width={200} variant='outline'
-                    colorScheme={'gray'} color={'gray.400'}
-                    fontSize={14}
-                >{show ? 'Close' : '+ Add Task'}</Button>
-                {show && <AddCard addCard={(feat) => {
-                    setShow(false)
-                    addNewCard(feat, title)
-                }} />}
+
             </Flex>
         </Flex>
     )
 }
 
-interface KanbanCardType {
-    item: featuresProps,
-    parent: String,
-    title: String,
-    index: Number,
-    removeCard: (_id : string) => void
-}
-const KanbanCard = ({ title, index, parent, item, removeCard }: KanbanCardType) => {
-
-    // @ts-ignore
-    const { attributes, listeners, setNodeRef, transform, transition } = useDraggable({
-        id: `card-${item._id}`,
-        data: {
-            title,
-            item,
-            index,
-            parent
-        }
-    });
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
-
-    };
-
-
-    return (
-        <Flex
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...listeners}
-            direction={'row'}
-            bg="white"
-            p={2}
-            m={1}
-            borderColor={'gray.200'}
-            borderWidth={.13}
-            borderRadius="sm"
-            boxShadow="sm"
-            w={300}
-            maxH={120}
-            justifyContent="center"
-        >
-            <VStack width={'80%'}>
-                <Text fontSize={14} width={'100%'} textAlign={'start'} fontWeight={'medium'} >{item.title}</Text>
-                <Text fontSize={12} width={'100%'} textAlign={'start'} >{item.description}</Text>
-                <HStack width={'100%'}>
-                    <MdFlag />
-                    <Text width={'100%'} fontSize={12} color={'gray.400'} >{`${item?.start_date ? new Date(item?.start_date).toLocaleDateString() : 'nill'} - ${item?.end_date ? new Date(item?.end_date).toLocaleDateString() : 'nill'}`}</Text>
-                </HStack>
-            </VStack>
-            <VStack width={'20%'} justifyContent={'end'} cursor={'pointer'} >
-                <Tooltip label={item?.creatorid?.username} >
-                    <Avatar size='xs' name='Add' src='https://bit.ly/dan-a' />
-                </Tooltip>
-                <IconButton
-                    icon={<ImBin color='red' aria-label='test' />}
-                    aria-label=''
-                    onClick={() => {
-                        removeCard(item._id)
-                    }}
-                />
-            </VStack>
-        </Flex>
-    )
-}

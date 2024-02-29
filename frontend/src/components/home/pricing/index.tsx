@@ -38,6 +38,10 @@ function PriceWrapper(props: Props) {
       display={'flex'}
       flexDirection={'column'}
       alignItems={'center'}
+      maxW={{
+        base : '250px',
+        lg : '30%'
+      }}
     >
       {children}
     </Box>
@@ -67,9 +71,6 @@ export default function Pricing(props : PricingProps) {
         marginTop={100}
         >
         <PriceWrapper
-          style={{
-            maxWidth: 350
-          }}
         >
           <Box py={4} px={12} width={240} minH={240} className={styles.roundHobby} >
             <Box >
@@ -93,7 +94,13 @@ export default function Pricing(props : PricingProps) {
           <VStack
             bg={useColorModeValue('gray.50', 'gray.700')}
             py={4}
-            borderBottomRadius={'xl'}>
+            borderBottomRadius={'xl'}
+            
+            maxW={{
+              base : '250px',
+              lg : '100%'
+            }}
+            >
             <List width={'100%'} spacing={3} textAlign="start" px={12}  >
               <ListItem minW={250} >
                 <ListIcon as={FaCheckCircle} color="green.500" />
@@ -143,7 +150,13 @@ export default function Pricing(props : PricingProps) {
           <VStack
             bg={useColorModeValue('gray.50', 'gray.700')}
             py={4}
-            borderBottomRadius={'xl'}>
+            borderBottomRadius={'xl'} 
+            
+            maxW={{
+              base : '250px',
+              lg : '100%'
+            }}
+            >
             <List width={'100%'} spacing={3} textAlign="start" px={12}  >
               <ListItem minW={250} >
                 <ListIcon as={FaCheckCircle} color="green.500" />
@@ -195,7 +208,13 @@ export default function Pricing(props : PricingProps) {
           <VStack
             bg={useColorModeValue('gray.50', 'gray.700')}
             py={4}
-            borderBottomRadius={'xl'}>
+            borderBottomRadius={'xl'}
+            
+            maxW={{
+              base : '250px',
+              lg : '100%'
+            }}
+            >
             <List width={'100%'} spacing={3} textAlign="start" px={12}  >
               <ListItem minW={250} >
                 <ListIcon as={FaCheckCircle} color="green.500" />

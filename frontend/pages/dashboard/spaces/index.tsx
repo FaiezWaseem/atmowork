@@ -1,37 +1,22 @@
 import {
-    Stack, Button, Box, Flex, Text, VStack, HStack, Tooltip, Avatar, useToast, Modal, ModalHeader, useDisclosure, ModalOverlay, ModalContent, FormControl, Input,
-    FormLabel, ModalCloseButton, ModalBody, ModalFooter, Center, Table,
+    Stack, Button, Box,  HStack,  useToast, Modal, ModalHeader, useDisclosure, ModalOverlay, ModalContent, FormControl, Input,
+    FormLabel, ModalCloseButton, ModalBody, ModalFooter, Table,
     Thead,
     Tbody,
     Tfoot,
     Tr,
     Th,
-    Td,
-    Link,
     TableContainer,
-    Menu,
-    MenuList,
-    MenuItem,
-    MenuButton,
-    IconButton
 } from '@chakra-ui/react'
 import SideBar from '@/components/dashboard/sidebar/index'
 import { MdFlag, MdAdd, MdCalendarMonth } from "react-icons/md"
-import { AiOutlinePlus, AiFillDelete } from 'react-icons/ai'
-import { GoKebabHorizontal } from 'react-icons/go'
-import { CiEdit } from 'react-icons/ci'
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import api from '@/utils/fetcher'
-import {
-    AutoComplete,
-    AutoCompleteInput,
-    AutoCompleteItem,
-    AutoCompleteList,
-} from "@choc-ui/chakra-autocomplete";
 import { projectType } from '@/types/types';
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router';
+import SpacesTr from '@/components/dashboard/spaces/table-row.tsx'
 
 export default function Home() {
     const router = useRouter();
@@ -138,54 +123,27 @@ export default function Home() {
                 <Table variant='simple'>
                     <Thead>
                         <Tr>
-                            <Th>Name</Th>
+                            <Th>Project</Th>
                             <Th display={'flex'} flexDirection={'row'} > <MdCalendarMonth /> start</Th>
                             <Th >end</Th>
                             <Th >Owner</Th>
+                            <Th >Team</Th>
                             <Th >Option</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         {projects.map(project => {
-                            return <Tr key={project._id} >
-                                <Td> <Link href={`/dashboard/kanban/${project._id}`} onClick={(e) => {
-                                    e.preventDefault();
-                                    router.push(`/dashboard/kanban/${project._id}`)
-                                }} > {project.title} </Link></Td>
-                                <Td onClick={() => console.log(project)}>{project.start_date ? new Date(project.start_date).toLocaleDateString() : 'nill'}</Td>
-                                <Td>{project.end_date ? new Date(project.end_date).toLocaleDateString() : 'nill'}</Td>
-                                <Td>{project.creatorid.username}</Td>
-                                <Td>
-                                    <Menu>
-                                        <MenuButton
-                                            as={IconButton}
-                                            aria-label='Options'
-                                            icon={<GoKebabHorizontal />}
-                                            variant='outline'
-                                        />
-                                        <MenuList>
-                                            <MenuItem icon={<CiEdit />}>
-                                                Edit
-                                            </MenuItem>
-                                            <MenuItem icon={<CiEdit />}>
-                                                Team
-                                            </MenuItem>
-                                            <MenuItem icon={<AiFillDelete />} color={'red'} onClick={() => deleteProject(project._id)} >
-                                                Delete
-                                            </MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Td>
-                            </Tr>
+                            return <SpacesTr project={project} deleteProject={deleteProject}  key={project._id}/>
                         })}
 
                     </Tbody>
                     <Tfoot>
                         <Tr>
-                            <Th>Name</Th>
+                            <Th>Project</Th>
                             <Th display={'flex'} flexDirection={'row'} > <MdCalendarMonth /> start</Th>
                             <Th >end</Th>
                             <Th >Owner</Th>
+                            <Th >Team</Th>
                             <Th >Option</Th>
                         </Tr>
                     </Tfoot>
@@ -234,27 +192,6 @@ export default function Home() {
                                 />
                             </FormControl>
                         </HStack>
-                        <Center mt={4}  >
-                            <FormControl w="60">
-                                <FormLabel>Members</FormLabel>
-                                <AutoComplete openOnFocus onChange={(e) => console.log(e)} >
-                                    <AutoCompleteInput variant="filled" />
-                                    <AutoCompleteList>
-                                        {people.map((person, oid) => (
-                                            <AutoCompleteItem
-                                                key={`option-${oid}`}
-                                                value={person.name}
-                                                textTransform="capitalize"
-                                                align="center"
-                                            >
-                                                <Avatar size="sm" name={person.name} src={person.image} />
-                                                <Text ml="4">{person.name}</Text>
-                                            </AutoCompleteItem>
-                                        ))}
-                                    </AutoCompleteList>
-                                </AutoComplete>
-                            </FormControl>
-                        </Center>
                     </ModalBody>
 
                     <ModalFooter>
