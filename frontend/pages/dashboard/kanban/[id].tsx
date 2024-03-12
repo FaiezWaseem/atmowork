@@ -151,7 +151,7 @@ export default function Kanban() {
                         </Tooltip>
                     </WrapItem>
                     {project && project.members.map(member => {
-                        return <WrapItem>
+                        return <WrapItem key={member._id} >
                             <Tooltip label={member.username} >
                                 <Avatar name={member.username} size={'sm'} src={`https://placehold.co/100x100/FFF/C261D1?text=${member.username.charAt(0)}&font=roboto`} />
                             </Tooltip>
@@ -221,6 +221,7 @@ export default function Kanban() {
                             removeCard={removeCard}
                             project={project}
                             loadFeatures={loadFeatures}
+                            
                         />
                     ))}
                 </Flex>
@@ -283,6 +284,7 @@ const KanbanLane = ({ title, items, color, removeCard , project , loadFeatures})
                         removeCard={removeCard}
                         project={project}
                         loadFeatures={loadFeatures}
+                    
                     />
                 ))}
 

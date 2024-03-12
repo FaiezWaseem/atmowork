@@ -98,7 +98,7 @@ export default function PaymentScreen() {
                 </Stack>
             </Center>
             <Stripe
-                stripeKey={'pk_test_51LY9pJJVyYfqVSZyedaiNkbPJbvZULEyjsXZr3LvNXQCajt25KfE1mOJCHL1omnKDzY0jE28wY31NHI91VqkwqGZ00bDBtgp1Q'}
+                stripeKey={process.env.NEXT_PUBLIC_stripe_public_key}
                 token={(token) => handleToken(token)}
                 // billingAddress={true}
                 email={email}

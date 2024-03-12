@@ -3,6 +3,7 @@ const UserController  = require('../controllers/UserController')
 const GoalController = require('../controllers/GoalController')
 const ProjectController = require('../controllers/ProjectController')
 const InviteController = require('../controllers/InviteController')
+const MindMapController = require('../controllers/MindMapController')
 
 const verifyToken = require('../middleware/authMiddleware')
 
@@ -33,6 +34,12 @@ router.post('/feature', verifyToken , ProjectController.createFeature)
 router.put('/feature/:id', verifyToken , ProjectController.updateFeature)
 router.delete('/feature/:id', verifyToken , ProjectController.deleteFeature)
 
+// MindMap
+router.get('/mindmaps', verifyToken , MindMapController.getAll)
+router.get('/mindmap/:id', verifyToken , MindMapController.get)
+router.post('/mindmap', verifyToken , MindMapController.createOne)
+router.put('/mindmap/:id', verifyToken , MindMapController.updateOne)
+router.delete('/mindmap/:id', verifyToken , MindMapController.removeOne)
 
 
 module.exports = router

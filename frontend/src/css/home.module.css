@@ -7,7 +7,6 @@
 }
 
 .heroBg {
-    background: url('../../public/assets/images/hero_bg.png');
     background-position: left;
     background-repeat: no-repeat;
     background-size: cover;
@@ -22,12 +21,12 @@
 }
 
 .TriangleBg {
-    background: url('../../public/assets/images/Rectangle.png');
+  
     background-size: cover;
 }
 
 .TriangleBgLeft {
-    background: url('../../public/assets/images/Rectangle_left.png');
+
     background-size: cover;
 }
 
@@ -62,7 +61,7 @@
 }
 
 .footerSignUp {
-    background: url('../../public/assets/images/bgPurple.png'), lightgray 50% / cover no-repeat;
+    /* background: url('../../public/assets/images/bgPurple.png'), lightgray 50% / cover no-repeat; */
     height: 400px;
 }
 

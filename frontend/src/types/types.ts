@@ -44,3 +44,11 @@ export interface KanbanCardType {
     loadFeatures: () => void,
     project : projectType
 }
+
+export interface MindMapType{
+  _id : string,
+  title : string,
+  thumbnail : string,
+  data : string | JSON,
+  creatorid : string | UserType
+}

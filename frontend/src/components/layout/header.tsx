@@ -28,16 +28,16 @@ import {
 import { useRouter } from 'next/router';
 import styles from '../../css/home.module.css'
 import { useCookies } from "react-cookie";
-import api from '@/utils/fetcher';
 import { useEffect, useState } from 'react';
 
-export default function Header() {
+export default function Header({ headerbg }: any) {
   const { isOpen, onToggle } = useDisclosure()
   const router = useRouter()
   const [cookies, removeCookie] = useCookies();
   const [client , setClient] = useState(false);
   useEffect(()=>{
       setClient(true)
+      console.log(headerbg)
   },[])
 
   return (

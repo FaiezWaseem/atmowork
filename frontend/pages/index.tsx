@@ -18,6 +18,10 @@ import Footer from '@/components/footer';
 import { useRouter } from 'next/navigation';
 import Testimonials from '@/components/home/testomonials';
 
+import hero_bg from '../public/assets/images/hero_bg.png';
+import Rectangle from '../public/assets/images/Rectangle.png'
+import Rectangle_left from '../public/assets/images/Rectangle_left.png'
+import bgPurple from '../public/assets/images/bgPurple.png'
 
 
 const IndexPage = () => {
@@ -29,7 +33,7 @@ const IndexPage = () => {
       Brings all your tasks, teammates,and tools together.'
     >
       <Stack width={'98.5vw'} gap={0} >
-        <Header />
+        <Header  />
         <HStack marginBottom={useBreakpointValue({ base: 10, lg: 15 })} flexWrap={useBreakpointValue({ base: 'wrap', lg: 'nowrap' })} >
           <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'} >
             <Text
@@ -62,7 +66,13 @@ const IndexPage = () => {
               >SignUp</Button>
             </HStack>
           </Stack>
-          <Stack w={useBreakpointValue({ base: '0%', lg: '50%' })} minH={useBreakpointValue({ base: '0vh', lg: '70vh' })} justify={'center'} align={'center'} className={styles.heroBg} >
+          <Stack w={useBreakpointValue({ base: '0%', lg: '50%' })} minH={useBreakpointValue({ base: '0vh', lg: '70vh' })} justify={'center'} align={'center'}
+            className={styles.heroBg}
+            style={{
+              backgroundImage: `url(${hero_bg.src})`,
+            }}
+
+          >
             <img src="./assets/images/kanban_board.gif" alt="kanban_board_gif"
               width={'70%'}
               height={250}
@@ -77,6 +87,9 @@ const IndexPage = () => {
 
         <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })}
           id='kanban'
+          style={{
+            backgroundImage: `url(${Rectangle.src})`,
+          }}
         >
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
             <img src='./assets/images/kanban_board1.png' alt='KanBan' width={useBreakpointValue({
@@ -110,7 +123,11 @@ const IndexPage = () => {
             </Text>
           </Stack>
         </HStack>
-        <HStack className={styles.TriangleBgLeft} minH={useBreakpointValue({ base: 300, lg: 600 })} id='Meet' >
+        <HStack className={styles.TriangleBgLeft} minH={useBreakpointValue({ base: 300, lg: 600 })} id='Meet'
+          style={{
+            backgroundImage: `url(${Rectangle_left.src})`,
+          }}
+        >
 
           <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'}
 
@@ -147,6 +164,9 @@ const IndexPage = () => {
         </HStack>
         <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })}
           id='MindMap'
+          style={{
+            backgroundImage: `url(${Rectangle.src})`,
+          }}
         >
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
             <img src='./assets/images/mind.png' alt='KanBan' width={useBreakpointValue({
@@ -178,7 +198,11 @@ const IndexPage = () => {
             </Text>
           </Stack>
         </HStack>
-        <HStack className={styles.TriangleBgLeft} minH={useBreakpointValue({ base: 300, lg: 600 })} >
+        <HStack className={styles.TriangleBgLeft} minH={useBreakpointValue({ base: 300, lg: 600 })}
+          style={{
+            backgroundImage: `url(${Rectangle_left.src})`,
+          }}
+        >
 
           <Stack w={useBreakpointValue({ base: '100%', lg: '50%' })} justify={'center'} align={'center'} >
             <Text
@@ -210,7 +234,11 @@ const IndexPage = () => {
             })} ></img>
           </Center>
         </HStack>
-        <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })} >
+        <HStack className={styles.TriangleBg} minH={useBreakpointValue({ base: 300, lg: 600 })}
+          style={{
+            backgroundImage: `url(${Rectangle.src})`,
+          }}
+        >
           <Center w={useBreakpointValue({ base: '0%', lg: '50%' })} >
             <img src='./assets/images/workflow.gif' alt='KanBan' width={useBreakpointValue({
               base: '200px',
@@ -256,7 +284,11 @@ const IndexPage = () => {
           navigate.push('/register?plan=' + plan)
         }} />
         <Testimonials />
-        <Center className={styles.footerSignUp} >
+        <Center className={styles.footerSignUp}
+          style={{
+            backgroundImage: `url(${bgPurple.src})`,
+          }}
+        >
           <Stack>
 
             <Text
