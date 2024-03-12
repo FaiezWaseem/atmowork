@@ -114,11 +114,11 @@ class ProjectController {
     }
     async updateFeature(req, res) {
         try {
-            const response = await FeatureModel.updateOne({ _id: req.params.id, creatorid: req.user }, { $set: req.body }, { new: true });
+            const response = await FeatureModel.updateOne({ _id: req.params.id }, { $set: req.body }, { new: true });
             console.log(response);
-            res.json({ status: true, message: 'updated ', response })
+            res.json({ status: !!response.modifiedCount , message: 'updated ', response })
         } catch (error) {
-
+            res.json({ status: false, message: error.message })
         }
     }
     async deleteFeature(req, res) {

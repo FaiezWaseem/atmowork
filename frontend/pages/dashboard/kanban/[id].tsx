@@ -111,6 +111,16 @@ export default function Kanban() {
     const updateFeatureStatus = async (item: projectType, type: String) => {
         const response = await api.put(`/api/user/feature/${item._id}`, { status: type });
         console.log(response.data)
+        if (!response.data.status) {
+            toast({
+                title: 'Error',
+                description: 'Unable to update status',
+                position: 'top',
+                status : 'error',
+                duration: 4000,
+                isClosable: false
+            })
+        }
     }
 
     const removeCard = async (_id: string) => {

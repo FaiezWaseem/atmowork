@@ -18,19 +18,39 @@ export default function AddNewTask({ addCard }) {
     const [start_date, setStartDate] = useState(dateInitial);
     const [end_date, setEndDate] = useState(dateInitial);
 
-    const [lane , setLane] = useState('')
+    const [lane, setLane] = useState('')
 
     const toast = useToast()
 
     const addTask = () => {
 
-        if(title.length < 3){
+        if (title.length < 3) {
             toast({
-                title : 'Title is Too Short',
-                description : 'Please Enter Minimum of 3 letter',
-                status  : 'warning',
-                duration : 4000,
-                position : 'top-right'
+                title: 'Title is Too Short',
+                description: 'Please Enter Minimum of 3 letter',
+                status: 'warning',
+                duration: 4000,
+                position: 'top-right'
+            })
+            return;
+        }
+        if (!checkIfStartDateIsNotOlderThanCurrentDate(start_date)) {
+            toast({
+                title: 'Invalid Start Date',
+                description: 'Invalid Start Date. Cant Select Older Date',
+                status: 'warning',
+                duration: 4000,
+                position: 'top-right'
+            })
+            return;
+        }
+        if (!checkIfStartDateIsNotOlderThanCurrentDate(end_date)) {
+            toast({
+                title: 'Invalid Ending Date',
+                description: 'Invalid Ending Date. Cant Select Older Date',
+                status: 'warning',
+                duration: 4000,
+                position: 'top-right'
             })
             return;
         }
@@ -41,7 +61,15 @@ export default function AddNewTask({ addCard }) {
 
         onClose()
     }
+    function checkIfStartDateIsNotOlderThanCurrentDate(start_date) {
+        const current_date = new Date().setHours(0, 0, 0, 0);
 
+        if (start_date >= current_date) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     return (
         <>
             <Button onClick={onOpen} maxW={'150px'} >+Add New Task</Button>
@@ -85,7 +113,7 @@ export default function AddNewTask({ addCard }) {
                                     onDateChange={setEndDate}
                                 />
                             </Flex>
-                            <Select placeholder='Select KanbanLane' mt={5} onChange={(e)=> setLane(e.target.value)} >
+                            <Select placeholder='Select KanbanLane' mt={5} onChange={(e) => setLane(e.target.value)} >
                                 <option value='Todo'>Todo</option>
                                 <option value='InProgress'>InProgress</option>
                                 <option value='Done'>Done</option>

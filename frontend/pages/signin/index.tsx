@@ -155,7 +155,14 @@ export default function SignIn() {
                     <Text lineHeight={0.4} fontSize={26}>Welcome Back,</Text>
                     <Text color={'gray.500'} >Signin to Continue</Text>
                     <Text >Email :</Text>
-                    <Input placeholder='Enter your Email address' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <Input placeholder='Enter your Email address' value={email}
+                     onChange={(e) => setEmail(e.target.value)}
+                     onKeyPress={event => {
+                        if (event.key === 'Enter') {
+                          Submit()
+                        }
+                      }}
+                     />
                     {message && <Text color={'GrayText'} fontStyle={'italic'} fontSize={14} >*{message}</Text>}
                     <Text >Password :</Text>
                     <InputGroup size='md'>
@@ -164,6 +171,12 @@ export default function SignIn() {
                             type={show ? 'text' : 'password'}
                             placeholder='Enter password'
                             value={password} onChange={(e) => setPassword(e.target.value)}
+
+                            onKeyPress={event => {
+                                if (event.key === 'Enter') {
+                                  Submit()
+                                }
+                              }}
                         />
                         <InputRightElement width='4.5rem'>
                             <Button h='1.75rem' size='sm' onClick={handleClick}>
