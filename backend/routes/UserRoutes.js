@@ -4,6 +4,7 @@ const GoalController = require('../controllers/GoalController')
 const ProjectController = require('../controllers/ProjectController')
 const InviteController = require('../controllers/InviteController')
 const MindMapController = require('../controllers/MindMapController')
+const MeetController = require('../controllers/MeetController')
 
 const verifyToken = require('../middleware/authMiddleware')
 
@@ -41,5 +42,9 @@ router.post('/mindmap', verifyToken , MindMapController.createOne)
 router.put('/mindmap/:id', verifyToken , MindMapController.updateOne)
 router.delete('/mindmap/:id', verifyToken , MindMapController.removeOne)
 
+
+// Meet 
+router.get('/meet/:id', verifyToken , MeetController.getMeet)
+router.post('/meet', verifyToken , MeetController.createMeet)
 
 module.exports = router

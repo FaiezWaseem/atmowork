@@ -6,15 +6,18 @@ const User = require('../../models/UserModel')
 let plansFeature = {
     'Hobby': {
         projects: 10,
-        team: 0
+        team: 0,
+        live : false,
     },
     'Standard': {
         projects: 10,
-        team: 5
+        team: 5,
+        live : false,
     },
     'Premium': {
         projects: 50,
-        team: -1
+        team: -1,
+        live : true
     },
 }
 
@@ -34,6 +37,18 @@ exports.hasExceededProjectCreateLimit = async (req) => {
             } else {
                 return false;
             }
+        }
+    } catch (error) {
+        return false;
+    }
+}
+exports.canCreateMeet = async (req) => {
+    try {
+        const user = await User.findOne({ _id: req.user }, { password: 0 }).populate('membership_plan_id');
+        if (user) {
+            return plansFeature[user.account_membership].live;
+        }else{
+            return false;
         }
     } catch (error) {
         return false;

@@ -16,18 +16,23 @@ import { useRouter } from 'next/router'
 
 export default function VideoCall() {
 
-    const [videocall, setVideocall] = useState(false)
+    const srchParams = new URLSearchParams(window.location.search)
+
+    const [videocall, setVideocall] = useState(srchParams.get('join') ? true : false)
     const [isHost, setHost] = useState(true)
     const [isPinned, setPinned] = useState(true)
     const [username, setUsername] = useState('')
     const [members, setMembers] = useState(1)
-    const [uniqueId , setUniqueId] = useState(10002)
+    const [uniqueId, setUniqueId] = useState(10002)
 
-    const [ loading , setLoading ] = useState(true)
-    const [ isAuthenticated, setAuthenticated ] = useState(false)
-    const [ user , setUser ] = useState<UserType |  null>(null)
+    const [loading, setLoading] = useState(true)
+    const [isAuthenticated, setAuthenticated] = useState(false)
+
+    const [duration, setDuration] = useState('')
+
 
     const p = useParams()
+
 
     const [channel, setChannel] = useState<string>('')
 
@@ -41,28 +46,56 @@ export default function VideoCall() {
             setChannel(p.hostId)
             setUniqueId(generateRandomNumber(5))
             fetchUser()
+            loadMeetInfo(p.hostId)
         }
     }, [p])
 
     const fetchUser = async () => {
         const { data } = await api.get('/api/user')
         if (data.status) {
-            setUser(data.user)
             setUsername(data.user.username)
             setAuthenticated(true)
             setLoading(false)
-        }else{
+        } else {
             toast({
-                title : 'Authentication Failed',
-                description : 'Please Login to continue',
-                duration : 5000,
-                isClosable : false,
-                position : 'top-right'
+                title: 'Authentication Failed',
+                description: 'Please Login to continue',
+                duration: 5000,
+                isClosable: false,
+                position: 'top-right'
             })
             router.push('/signin')
         }
     }
+    async function loadMeetInfo(id) {
+        try {
+            const { data } = await api.get(`/api/user/meet/${id}`)
+            if (data.status) {
+                setInterval(() => {
+                    meetingTimer(data.meet.start_time)
+                }, 1000)
+            } else {
+                toast({
+                    title: 'Meeting Not Found',
+                    description: 'Please try again',
+                    duration: 5000,
+                    isClosable: false,
+                    position: 'top-right'
+                })
+                router.push('/')
+            }
 
+        } catch (err) {
+            toast({
+                title : 'Server Error || Or User Not Authorized',
+                description : 'Please try again with Authorized Account',
+                duration : 5000,
+                isClosable : false,
+                position : 'top-right'
+            })
+            router.push('/')
+        }
+    }
     function generateRandomNumber(length: number): number {
         let characters = '0123456789';
         let code = '';
@@ -73,11 +106,43 @@ export default function VideoCall() {
         return Number(code);
     }
 
-    if(loading){
+    function meetingTimer(startTime: string) {
+        const startTimeStamp = new Date(startTime).getTime()
+        const now = new Date().getTime()
+        const diff = now - startTimeStamp
+        const hours = Math.floor(diff / (1000 * 60 * 60))
+        const minutes = Math.floor(diff / (1000 * 60)) % 60
+        const seconds = Math.floor(diff / 1000) % 60
+        setDuration(`${hours}h ${minutes}m ${seconds}s`)
+        if (minutes >= 59) {
+            toast({
+                title: 'Reminder',
+                description: 'Meeting Will End in 1 Minutes',
+                duration: 5000,
+                isClosable: false,
+                position: 'top-right'
+            })
+            router.push('/')
+        }
+        if (hours >= 1) {
+            toast({
+                title: 'Meeting Time Up',
+                description: 'Create A new One',
+                duration: 5000,
+                isClosable: false,
+                position: 'top-right'
+            })
+            router.push('/')
+        }
+    }
+
+
+
+    if (loading) {
         return <>Wait Initializing...</>
     }
 
-    
+
     if (!videocall && isAuthenticated) {
         return <Stack>
             <Center my={2}>
@@ -103,6 +168,9 @@ export default function VideoCall() {
             <HStack padding={2} bg={'purple.400'} justifyContent={'space-between'} >
                 <Text color={'white'}>
                     Members {members}
+                </Text>
+                <Text color={'white'}>
+                    Meet started  [{duration}] Ago
                 </Text>
                 <HStack spacing={2} >
                     <Button onClick={() => setPinned(!isPinned)}>
