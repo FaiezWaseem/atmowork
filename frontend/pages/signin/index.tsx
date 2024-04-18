@@ -6,6 +6,7 @@ import api from "@/utils/fetcher";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import useUser from "@/providers/userStore";
+import Cookies from "js-cookie";
 
 export default function SignIn() {
     const router = useRouter();
@@ -20,8 +21,6 @@ export default function SignIn() {
 
     const { inviteCode } = router.query
 
-        //@ts-ignore
-    const user = useUser((state) => state.users)
     
     useEffect(() => {
        const redirectTo =  checkIfAuthUser()
@@ -100,9 +99,10 @@ export default function SignIn() {
 
     const checkIfAuthUser = () => {
 
+        const user = Cookies.get('token')
         console.log(user)
 
-        if(!user){
+        if(user){
 
             const { inviteCode } = router.query
             let query = {}

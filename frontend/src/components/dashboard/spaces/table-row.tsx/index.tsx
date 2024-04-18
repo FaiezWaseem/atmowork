@@ -38,7 +38,7 @@ export default function SpacesTr({ project, deleteProject } : SpacesTrProps) {
         <Td>{project.creatorid.username}</Td>
         <Td>
             <AvatarGroup size='md' max={2}>
-                {project.members.map(member => <Avatar name={member.username} size='sm' src='https://bit.ly/dan-a'  />)}
+                {project.members.map(member => <Avatar name={member.username} key={member.username} size='sm' src='https://bit.ly/dan-a'  />)}
             </AvatarGroup>
         </Td>
         <Td>

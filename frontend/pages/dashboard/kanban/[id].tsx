@@ -1,6 +1,11 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Stack, Badge, Flex, Text, HStack, useToast, Tooltip } from '@chakra-ui/react'
+
+import {
+    Stack, Badge, Flex, Text, HStack, useToast, Tooltip, Box, Image
+    , Modal, ModalBody, ModalOverlay, ModalHeader, ModalContent, ModalCloseButton, ModalFooter
+    , useDisclosure
+} from '@chakra-ui/react'
 import {
     DndContext,
     useDroppable,
@@ -13,7 +18,7 @@ import {
 import { useParams } from 'next/navigation';
 import api from '@/utils/fetcher';
 import { featuresProps, projectType } from '@/types/types';
-import { Avatar, AvatarBadge, AvatarGroup, Wrap, WrapItem } from '@chakra-ui/react'
+import { Avatar, Input, Wrap, WrapItem } from '@chakra-ui/react'
 
 import AddMemberModal from '@/components/dashboard/addmember/add-member';
 import AddNewTask from '@/components/dashboard/addtask/add-new-task';
@@ -21,8 +26,15 @@ import KanbanCard from '@/components/dashboard/kanbanCard/kanban-card';
 
 const BoardImg = 'https://images.unsplash.com/photo-1707345512638-997d31a10eaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMzg3Mzl8MXwxfHNlYXJjaHwxfHxuYXR1cmV8ZW58MHwwfHx8MTcwOTA2MzE2Nnww&ixlib=rb-4.0.3&q=80&w=1080'
 
+import { FaFileMedical } from "react-icons/fa6";
+import { FiSend } from "react-icons/fi";
+import { TiMessages } from "react-icons/ti";
+
 export default function Kanban() {
     const params = useParams();
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
     const [todoItems, setTodoItems] = useState([]);
     const [doneItems, setDoneItems] = useState([]);
     const [inProgressItems, setInProgressItems] = useState([]);
@@ -116,7 +128,7 @@ export default function Kanban() {
                 title: 'Error',
                 description: 'Unable to update status',
                 position: 'top',
-                status : 'error',
+                status: 'error',
                 duration: 4000,
                 isClosable: false
             })
@@ -182,14 +194,14 @@ export default function Kanban() {
             sensors={sensors}
             onDragEnd={(e) => {
 
-      
+
 
                 const container = e.over?.id;
                 const item = e.active.data.current?.item || "";
                 const index = e.active.data.current?.index || 0;
                 const parent = e.active.data.current?.parent || "Todo";
 
-         
+
 
                 if (container === "Todo" && (container !== parent)) {
                     setTodoItems([...todoItems, { ...item }]);
@@ -231,9 +243,21 @@ export default function Kanban() {
                             removeCard={removeCard}
                             project={project}
                             loadFeatures={loadFeatures}
-                            
+
                         />
                     ))}
+
+                    <Box>
+                        <HStack _hover={{ cursor: 'pointer' }}
+                            pos={'absolute'} bottom={10} right={10} shadow={'md'} bg={'whiteAlpha.700'} p={4} borderRadius={6}
+                            onClick={onOpen}
+                        >
+                            <TiMessages size={24} />
+                        </HStack>
+                    </Box>
+
+                    <ChatBoxModal onClose={onClose} isOpen={isOpen} id={params?.id} />
+
                 </Flex>
             </Flex>
         </DndContext>
@@ -241,10 +265,69 @@ export default function Kanban() {
 }
 
 
+const ChatMessage = ({ isSender , isImage }) => {
+    return <HStack justify={isSender ? 'flex-end' : 'flex-start'} my={2} >
+        <Box boxShadow={'sm'} bg={'#FFF'} p={4} width={'40%'} borderColor={'gray.100'} borderRadius={3} borderWidth={'1.5px'} >
+            <Text fontWeight={'bold'} fontSize={'lg'} >{isSender? 'You' : 'Someone'}</Text>
+            {isImage? <Image src={'https://picsum.photos/id/1015/200/300'} height={200} width={200} /> : null }
+            <Text fontSize={'sm'} >{isSender? 'Hi, I am using this app' : 'Hi, I am using this app'}</Text>
+            <Text fontSize={'sm'} >{isSender? '10:00 PM' : '10:00 PM'}</Text>
+        </Box>
+    </HStack>
+}
+
+const ChatContainer = () => {
+    return <Flex flex="1" flexDir={'column'} p={4} bg={'whiteAlpha.700'} borderRadius={6} height={'55vh'} overflowY={'scroll'} >
+        <ChatMessage isSender={false} isImage={false} />
+        <ChatMessage isSender={true} isImage />
+        <ChatMessage isSender={false} isImage />
+        <ChatMessage isSender={true} isImage={false} />
+        <ChatMessage isSender={false} isImage={false} />
+        <ChatMessage isSender={true}  isImage={false} />
+    </Flex>
+}
+
+const ChatInput = () => {
+    return <HStack width={'100%'} p={2} >
+        <HStack boxShadow={'lg'} bg={'#FFF'} p={4} width={'100%'} borderRadius={6} >
+            <Box _hover={{
+                cursor: 'pointer',
+                color: 'gray.600',
+            }}>
+                <FaFileMedical size={20} />
+            </Box>
+            <Input mx={5} variant='unstyled' placeholder='Enter Some Message Here...' autoFocus />
+            <Box _hover={{
+                cursor: 'pointer',
+                color: 'gray.600',
+            }}>
+                <FiSend size={20} />
+            </Box>
+        </HStack>
+    </HStack>
+}
+
+
+const ChatBoxModal = ({ onClose, isOpen, id }) => {
+    return <Modal onClose={onClose} size={"6xl"} isOpen={isOpen}>
+        <ModalOverlay />
+        <ModalContent>
+            <ModalHeader>Project Discussions & Files</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody maxH={'55vh'} minH={'55vh'} >
+                <ChatContainer />
+
+            </ModalBody>
+            <ModalFooter>
+                <ChatInput />
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
 
 
 
-const KanbanLane = ({ title, items, color, removeCard , project , loadFeatures}) => {
+const KanbanLane = ({ title, items, color, removeCard, project, loadFeatures }) => {
 
     const { setNodeRef } = useDroppable({
         id: title,
@@ -294,7 +377,7 @@ const KanbanLane = ({ title, items, color, removeCard , project , loadFeatures})
                         removeCard={removeCard}
                         project={project}
                         loadFeatures={loadFeatures}
-                    
+
                     />
                 ))}
 

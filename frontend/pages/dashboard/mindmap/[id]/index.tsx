@@ -14,6 +14,7 @@ import { FaImage } from "react-icons/fa";
 import { useParams } from 'next/navigation';
 import api from '@/utils/fetcher';
 
+
 export default function MindMapPage() {
 
     //@ts-ignore
@@ -32,8 +33,10 @@ export default function MindMapPage() {
 
 
     useEffect(() => {
-        if (id) {
-            LoadMap()
+        if(typeof window != 'undefined'){
+            if (id) {
+                LoadMap()
+            }   
         }
     }, [id])
 
@@ -146,6 +149,7 @@ export default function MindMapPage() {
 
 
     }
+
 
 
 

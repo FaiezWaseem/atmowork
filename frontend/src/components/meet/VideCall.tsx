@@ -165,7 +165,7 @@ export default function VideoCall() {
         </Stack>
     } else if (window !== undefined && videocall && isAuthenticated) {
         return <Stack h={'100vh'} >
-            <HStack padding={2} bg={'purple.400'} justifyContent={'space-between'} >
+            <HStack padding={2} bg={'#805AD5'} justifyContent={'space-between'} >
                 <Text color={'white'}>
                     Members {members}
                 </Text>
@@ -214,6 +214,33 @@ export default function VideoCall() {
                 callbacks={{
                     EndCall: () => setVideocall(false),
 
+                }}
+                styleProps={{
+                    usernameText : {
+                        background : '#000'
+                    },
+                    videoMode : {
+                        min : 'cover',
+                        max : 'cover'
+                    },
+                    localBtnContainer : {
+                        background : '#805AD5'
+                    },
+                    gridVideoCells : {
+                        padding : 20,
+                        border : '2px solid #000',
+                        margin : 1,
+                        width :'auto'
+                    },
+                    minViewContainer : {
+                        border : '2px solid #000',
+                        objectFit : 'cover'
+                        
+                    },
+                    maxViewContainer : {
+                        border : '2px solid #000',
+                        margin : 1
+                    }
                 }}
             />}
         </Stack>
