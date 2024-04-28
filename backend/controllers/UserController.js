@@ -40,6 +40,7 @@ class UserController {
                   username,
                   email
                 }})
+              res.json({ status : true  , user})
         } catch (error) {
             res.json({
                 status: false,

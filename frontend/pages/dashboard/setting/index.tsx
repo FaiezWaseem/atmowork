@@ -14,6 +14,7 @@ import {
   AvatarBadge,
   IconButton,
   Center,
+  useToast,
 } from '@chakra-ui/react'
 import { SmallCloseIcon } from '@chakra-ui/icons'
 import useUser from '@/providers/userStore'
@@ -32,6 +33,8 @@ export default function UserProfileEdit() {
     const [username , setUsername] = useState(user?.username)
     const [email , setEmail] = useState(user?.email)
 
+    const toast = useToast()
+
     const navigate = useRouter()
 
     useEffect(()=>{
@@ -44,9 +47,20 @@ export default function UserProfileEdit() {
     },[user])
 
     const onSave = async () => {
-        const res = await api.post('/api/user/update', user)
+        const res = await api.put('/api/user/', {
+            username,
+            email,
+        })
         if (res.data.status) {
-            setUser(res.data.user)
+            toast({
+                title: 'Success',
+                description: 'User profile updated successfully',
+                status:'success',
+                duration: 4000,
+                isClosable: true,
+                position :'top'
+            })
+            setUser({...user , email , username})
         }
     }
 
