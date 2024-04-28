@@ -32,6 +32,22 @@ class UserController {
         }
     }
 
-}
+    async updateMe(req, res) {
+        try {
+            const { username , email } = req.body;
+            const user = await UserModel.findOneAndUpdate({ _id: req.user }, {
+                $set: {
+                  username,
+                  email
+                }})
+        } catch (error) {
+            res.json({
+                status: false,
+                message: error.message
+            })
+        }
+
+    }
+}   
 
 module.exports = new UserController()

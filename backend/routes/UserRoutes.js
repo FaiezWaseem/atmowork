@@ -9,6 +9,7 @@ const MeetController = require('../controllers/MeetController')
 const verifyToken = require('../middleware/authMiddleware')
 
 router.get('/' , verifyToken , UserController.getMe)
+router.put('/' , verifyToken , UserController.updateMe)
 
 
 // Goals
