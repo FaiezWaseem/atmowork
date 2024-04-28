@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 8001;
 
 const AuthRouter = require('./routes/AuthRoute')
 const UserRouter = require('./routes/UserRoutes')
+const ChatsRouter = require('./routes/ChatRoutes')
 
 
 mongoose.connect('mongodb://127.0.0.1:27017/atmowork')
@@ -27,6 +28,6 @@ app.use(express.urlencoded({ extended : true ,  limit: '50mb'}))
 
 app.use('/api/auth',AuthRouter)
 app.use('/api/user' , UserRouter)
-
+app.use('/api/project' , ChatsRouter )
 
 app.listen(PORT , ()=> console.log(`Listening on http://localhost:${PORT}`))
