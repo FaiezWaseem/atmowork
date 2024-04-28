@@ -4,9 +4,14 @@ const Chat = require('../models/ChatModel');
 
 class ChatController {
 
-    async addMessage(req, res) {
+
+    async addMessage(req, res , io) {
         try {
-            const message = await Chat.create({ ...req.body, creatorid: req.user , project_id : req.params.chatid });
+            let message = await Chat.create({ ...req.body, creatorid: req.user , project_id : req.params.chatid });
+            message = await Chat.findById(message._id).populate('creatorid');
+            if(io){
+                io.emit(`${req.params.chatid}-new-message`, JSON.stringify(message));
+            }
             res.status(200).json({ message: 'Message Sent', "success": true, })
         } catch (error) {
             res.status(404).json({ message: error.message, "success": false })
@@ -14,7 +19,8 @@ class ChatController {
     }
     async getMessages(req, res) {
         try {
-            const messages = await Chat.find({ chatid: req.params.chatid }).sort({ createdAt: -1 });
+            const messages = await Chat.find({ project_id: req.params.chatid })
+            .populate('creatorid')
             res.status(200).json({ message: 'Messages Retrieved', "success": true, messages });
         } catch (error) {
             res.status(404).json({ message: error.message, "success": false })
@@ -35,4 +41,4 @@ class ChatController {
 
 
 
-module.exports = new ChatController;
+module.exports = new  ChatController;

@@ -1,5 +1,4 @@
 const express = require('express');
-const app = express();
 const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 const path = require('path')
@@ -7,9 +6,23 @@ const cors = require('cors')
 const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 8001;
 
+const { Server } = require('socket.io');
+const { createServer } = require('node:http');
+
+const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
 const AuthRouter = require('./routes/AuthRoute')
 const UserRouter = require('./routes/UserRoutes')
-const ChatsRouter = require('./routes/ChatRoutes')
+const ChatsRouter = require('./routes/ChatRoutes')(io)
+
 
 
 mongoose.connect('mongodb://127.0.0.1:27017/atmowork')
@@ -30,4 +43,10 @@ app.use('/api/auth',AuthRouter)
 app.use('/api/user' , UserRouter)
 app.use('/api/project' , ChatsRouter )
 
-app.listen(PORT , ()=> console.log(`Listening on http://localhost:${PORT}`))
+io.on('connection', (socket) => {
+  console.log('a user connected' , socket.id);
+});
+
+
+
+server.listen(PORT, () => { console.log(`Listening on PORT http://localhost:${PORT}`, 24) })
