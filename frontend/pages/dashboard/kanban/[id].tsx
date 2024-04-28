@@ -1,10 +1,10 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import {
     Stack, Badge, Flex, Text, HStack, useToast, Tooltip, Box, Image
     , Modal, ModalBody, ModalOverlay, ModalHeader, ModalContent, ModalCloseButton, ModalFooter
-    , useDisclosure
+    , useDisclosure, Center
 } from '@chakra-ui/react'
 import {
     DndContext,
@@ -26,9 +26,13 @@ import KanbanCard from '@/components/dashboard/kanbanCard/kanban-card';
 
 const BoardImg = 'https://images.unsplash.com/photo-1707345512638-997d31a10eaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMzg3Mzl8MXwxfHNlYXJjaHwxfHxuYXR1cmV8ZW58MHwwfHx8MTcwOTA2MzE2Nnww&ixlib=rb-4.0.3&q=80&w=1080'
 
-import { FaFileMedical } from "react-icons/fa6";
-import { FiSend } from "react-icons/fi";
+
 import { TiMessages } from "react-icons/ti";
+
+import { useDropzone } from 'react-dropzone'
+
+import { ChatContainer , ChatInput } from '@/components/dashboard/DiscussionBox';
+
 
 export default function Kanban() {
     const params = useParams();
@@ -265,61 +269,33 @@ export default function Kanban() {
 }
 
 
-const ChatMessage = ({ isSender , isImage }) => {
-    return <HStack justify={isSender ? 'flex-end' : 'flex-start'} my={2} >
-        <Box boxShadow={'sm'} bg={'#FFF'} p={4} width={'40%'} borderColor={'gray.100'} borderRadius={3} borderWidth={'1.5px'} >
-            <Text fontWeight={'bold'} fontSize={'lg'} >{isSender? 'You' : 'Someone'}</Text>
-            {isImage? <Image src={'https://picsum.photos/id/1015/200/300'} height={200} width={200} /> : null }
-            <Text fontSize={'sm'} >{isSender? 'Hi, I am using this app' : 'Hi, I am using this app'}</Text>
-            <Text fontSize={'sm'} >{isSender? '10:00 PM' : '10:00 PM'}</Text>
-        </Box>
-    </HStack>
-}
 
-const ChatContainer = () => {
-    return <Flex flex="1" flexDir={'column'} p={4} bg={'whiteAlpha.700'} borderRadius={6} height={'55vh'} overflowY={'scroll'} >
-        <ChatMessage isSender={false} isImage={false} />
-        <ChatMessage isSender={true} isImage />
-        <ChatMessage isSender={false} isImage />
-        <ChatMessage isSender={true} isImage={false} />
-        <ChatMessage isSender={false} isImage={false} />
-        <ChatMessage isSender={true}  isImage={false} />
-    </Flex>
-}
-
-const ChatInput = () => {
-    return <HStack width={'100%'} p={2} >
-        <HStack boxShadow={'lg'} bg={'#FFF'} p={4} width={'100%'} borderRadius={6} >
-            <Box _hover={{
-                cursor: 'pointer',
-                color: 'gray.600',
-            }}>
-                <FaFileMedical size={20} />
-            </Box>
-            <Input mx={5} variant='unstyled' placeholder='Enter Some Message Here...' autoFocus />
-            <Box _hover={{
-                cursor: 'pointer',
-                color: 'gray.600',
-            }}>
-                <FiSend size={20} />
-            </Box>
-        </HStack>
-    </HStack>
-}
 
 
 const ChatBoxModal = ({ onClose, isOpen, id }) => {
-    return <Modal onClose={onClose} size={"6xl"} isOpen={isOpen}>
+
+    const [selectedFiles, setSelectedFiles] = useState([])
+
+    const onDrop = useCallback((acceptedFiles: File[]) => {
+        setSelectedFiles(acceptedFiles)
+    }, [])
+    const { getRootProps, isDragActive } = useDropzone({ onDrop })
+
+    return <Modal onClose={onClose} size={"full"} isOpen={isOpen}>
         <ModalOverlay />
         <ModalContent>
             <ModalHeader>Project Discussions & Files</ModalHeader>
             <ModalCloseButton />
-            <ModalBody maxH={'55vh'} minH={'55vh'} >
-                <ChatContainer />
-
+            <ModalBody {...getRootProps()}  >
+                {isDragActive && <Center pos={'absolute'} top={0} flexDir={'column'} width={'100vw'}
+                    height={'100vh'} bg={'white'} zIndex={5} >
+                    <Image src={'/file_upload.png'} maxH={300} />
+                    <Text fontFamily={'monospace'} fontSize={'3xl'} >Drop File Here</Text>
+                </Center>}
+                <ChatContainer id={id} />
             </ModalBody>
             <ModalFooter>
-                <ChatInput />
+                <ChatInput selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} id={id}  />
             </ModalFooter>
         </ModalContent>
     </Modal>
