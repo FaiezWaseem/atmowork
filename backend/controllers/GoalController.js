@@ -20,9 +20,11 @@ class GoalController {
     async getGoal(req, res) {
         try {
             const goal = await GoalsModel.findById(req.params.id)
+            const tasks = await GoalTaskModel.find({ goalid: req.params.id })
             res.json({
                 status: true,
-                goal
+                goal,
+                tasks
             })
         } catch (error) {
             res.json({
