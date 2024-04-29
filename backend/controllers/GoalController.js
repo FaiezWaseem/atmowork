@@ -1,10 +1,11 @@
 const GoalsModel = require('../models/GoalsModel')
+const GoalTaskModel = require('../models/GoalTaskModel')
 
 
 class GoalController {
     async getGoals(req, res) {
         try {
-            const goals = await GoalsModel.find({ userid : req.user }).sort('created_at');
+            const goals = await GoalsModel.find({ userid: req.user }).sort('created_at');
             res.json({
                 status: true,
                 goals
@@ -59,19 +60,69 @@ class GoalController {
     }
     async deleteGoal(req, res) {
         try {
-            const result  = await GoalsModel.deleteOne({ _id : req.params.id , userid : req.user} );
+            const result = await GoalsModel.deleteOne({ _id: req.params.id, userid: req.user });
             console.log(result)
             res.json({
-                status : result.deletedCount ? true : false,
-                message : result.deletedCount ? 'Goal Deleted' : 'Failed To Delete'
+                status: result.deletedCount ? true : false,
+                message: result.deletedCount ? 'Goal Deleted' : 'Failed To Delete'
             })
         } catch (error) {
             res.json({
-                status : false,
-                message : error.message
+                status: false,
+                message: error.message
             })
         }
     }
+
+    async createTask(req, res) {
+        try {
+            const task = await GoalTaskModel.create({
+                title: req.body.title,
+                description: req.body.description,
+                deadline: req.body.deadline,
+                status: req.body.status,
+                userid: req.user,
+                goalid: req.params.id,
+            })
+            res.json({
+                status: true,
+                task
+            })
+        } catch (err) {
+            res.json({
+                status: false,
+                message: error.message
+            })
+        }
+    }
+    async updateTask(req, res) {
+        try {
+            const task = await GoalTaskModel.findByIdAndUpdate(req.params.id, req.body)
+            res.json({
+                status: true,
+                task
+            })
+        } catch (err) {
+            res.json({
+                status: false,
+                message: error.message
+            })
+        }
+    }
+    async deleteTask(req, res) {
+        try {
+            const result = await GoalTaskModel.deleteOne({ _id: req.params.id, userid: req.user });
+            res.json({
+                status: result.deletedCount ? true : false,
+                message: result.deletedCount ? 'Task Deleted' : 'Failed To Delete'
+            })
+        } catch (error) {
+            res.json({
+                status: false,
+                message: error.message
+            })
+        }
+    } 
 }
 
 module.exports = new GoalController()

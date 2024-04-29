@@ -18,6 +18,10 @@ router.get('/goal/:id' , verifyToken , GoalController.getGoal)
 router.post('/goal' , verifyToken , GoalController.createGoal)
 router.put('/goal' , verifyToken , GoalController.updateGoal)
 router.delete('/goal/:id' , verifyToken , GoalController.deleteGoal)
+router.post('/goal/:id/task' , verifyToken , GoalController.createTask)
+router.put('/goal/task/:id' , verifyToken , GoalController.updateTask)
+router.delete('/goal/task/:id' , verifyToken , GoalController.deleteTask)
+
 
 
 //Project

@@ -5,7 +5,12 @@ const GoalTaskSchema = new mongo.Schema({
     userid : {
         type : mongo.Types.ObjectId,
         ref : 'user',
-        required : [true , 'Userid is Required!!. Goal Creator Id Required.']
+        required : [true , 'Userid is Required!!']
+    },
+    goalid : {
+        type : mongo.Types.ObjectId,
+        ref : 'goals',
+        required : [true , 'GoalId is Required!!']
     },
     title: {
      type : String,
@@ -18,11 +23,16 @@ const GoalTaskSchema = new mongo.Schema({
     status: {
         type: String,
         enum: { 
-            values : ['inprogress', 'Completed'],
+            values : ['inprogress', 'completed'],
             message: '{VALUE} is not supported'
         },
         default: 'inprogress'
     },
+    deadline : {
+        type : Date,
+        default : Date.now,
+        max : Date.now
+    }
 })
 GoalTaskSchema.set('timestamps', true)
 
