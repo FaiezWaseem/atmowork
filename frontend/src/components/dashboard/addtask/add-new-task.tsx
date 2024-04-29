@@ -2,7 +2,6 @@
 
 import { useDisclosure, Input, Flex, FormLabel, Button, Modal, ModalBody, ModalHeader, ModalOverlay, ModalContent, ModalCloseButton, ModalFooter, useToast } from "@chakra-ui/react"
 import { useState } from "react"
-import { useParams } from 'next/navigation'
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Select } from '@chakra-ui/react'
 
