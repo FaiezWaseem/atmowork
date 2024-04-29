@@ -16,6 +16,20 @@ class GoalController {
             })
         }
     }
+    async getGoal(req, res) {
+        try {
+            const goal = await GoalsModel.findById(req.params.id)
+            res.json({
+                status: true,
+                goal
+            })
+        } catch (error) {
+            res.json({
+                status: false,
+                message: error.message
+            })
+        }
+    }
     async createGoal(req, res) {
         try {
             console.log(req.body)
