@@ -136,7 +136,7 @@ export default function UserProfileEdit() {
                 navigate.back()
              }}
             >
-            Cancel
+            Go back
           </Button>
           <Button
             bg={'blue.400'}

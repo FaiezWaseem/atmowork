@@ -11,6 +11,7 @@ import { CiEdit } from 'react-icons/ci'
 import api from '@/utils/fetcher'
 import PageLayout from '@/components/page-layout'
 import useUser from '@/providers/userStore'
+import { useRouter } from 'next/router'
 
 export default function Goals() {
     const [goals, setGoals] = React.useState<Array<any>>([]);
@@ -93,6 +94,46 @@ export default function Goals() {
             })
         }
     }
+    const deleteGoal = async (goal : any)=>{
+
+        try {
+
+            const response = await api.delete(`/api/user/goal/${goal._id}`)
+            const { data } = response;
+            if (data.status) {
+                toast({
+                    title: 'Success!',
+                    description: data.message,
+                    duration: 5000,
+                    status: 'success',
+                    isClosable: true,
+                    position: 'top-right'
+                })
+
+                setGoals(goals.filter( g => g._id !==  goal._id))
+            } else {
+                toast({
+                    title: 'Oops Something Went Wrong!!',
+                    description: data.message,
+                    duration: 5000,
+                    status: 'error',
+                    isClosable: true,
+                    position: 'top-right'
+                })
+            }
+        } catch (error) {
+            toast({
+                title: 'Oops Something Went Wrong!!',
+                description: error.message,
+                duration: 5000,
+                status: 'error',
+                isClosable: true,
+                position: 'top-right'
+            })
+
+        }
+    
+}
 
     return <PageLayout
         title={`Goals | ${user?.username}'s Workspace`}
@@ -113,48 +154,9 @@ export default function Goals() {
                         <Text textAlign={'center'} fontFamily={'monospace'} fontSize={20} >No Goals Added Yet!!</Text>
                     </Stack>
                 </Center>}
-                <Flex flexWrap={'wrap'} justify={'space-evenly'} >
+                <Flex flexWrap={'wrap'} justify={'flex-start'} gap={4} >
                     {goals.map(goal => <GoalCard goal={goal} key={goal._id}
-                    deleteGoal={async ()=>{
-
-                            try {
-                    
-                                const response = await api.delete(`/api/user/goal/${goal._id}`)
-                                const { data } = response;
-                                if (data.status) {
-                                    toast({
-                                        title: 'Success!',
-                                        description: data.message,
-                                        duration: 5000,
-                                        status: 'success',
-                                        isClosable: false,
-                                        position: 'top'
-                                    })
-
-                                    setGoals(goals.filter( g => g._id !==  goal._id))
-                                } else {
-                                    toast({
-                                        title: 'Oops Something Went Wrong!!',
-                                        description: data.message,
-                                        duration: 5000,
-                                        status: 'error',
-                                        isClosable: false,
-                                        position: 'top'
-                                    })
-                                }
-                            } catch (error) {
-                                toast({
-                                    title: 'Oops Something Went Wrong!!',
-                                    description: error.message,
-                                    duration: 5000,
-                                    status: 'error',
-                                    isClosable: false,
-                                    position: 'top'
-                                })
-                    
-                            }
-                        
-                    }}
+                    deleteGoal={deleteGoal}
                     />)}
                 </Flex>
                 <Modal
@@ -194,9 +196,8 @@ export default function Goals() {
 }
 
 
-const GoalCard = ({ goal , deleteGoal }) => {
-
-    const toast = useToast();
+const GoalCard = ({ goal , deleteGoal  }) => {
+    const navigate = useRouter();
 
 
     return <Stack w={200} h={200} shadow={'md'} margin={2} borderRadius={8}
@@ -219,21 +220,21 @@ const GoalCard = ({ goal , deleteGoal }) => {
                     <MenuItem icon={<CiEdit />}>
                         Rename
                     </MenuItem>
-                    <MenuItem icon={<AiFillDelete />} color={'red'} onClick={deleteGoal} >
+                    <MenuItem icon={<AiFillDelete />} color={'red'} onClick={()=> deleteGoal(goal)} >
                         Delete
                     </MenuItem>
                 </MenuList>
             </Menu>
         </HStack>
-        <Center>
+        <Center onClick={() => navigate.push(`/dashboard/goal/${goal?._id}`)} >
             <CircularProgress value={goal?.progress} size='60px' thickness='8px' >
                 <CircularProgressLabel>{goal?.progress}%</CircularProgressLabel>
             </CircularProgress>
         </Center>
-        <Center lineHeight={0.5} >
+        <Center lineHeight={0.5} onClick={() => navigate.push(`/dashboard/goal/${goal?._id}`)} >
             <Text>{goal?.title}</Text>
         </Center>
-        <Center>
+        <Center onClick={() => navigate.push(`/dashboard/goal/${goal?._id}`)} >
             <Text textDecor={'underline'} color={'purple'} >{goal?.targets} targets</Text>
         </Center>
     </Stack>
