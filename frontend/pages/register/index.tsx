@@ -136,7 +136,11 @@ export default function Register() {
                     isClosable: true,
                     position: 'top'
                 })
-                router.push('/user/payment?inviteCode='+inviteCode+'&projectid='+projectid, { scroll: false   })
+                if(inviteCode && projectid && (inviteCode != 'null' || inviteCode != null || inviteCode != undefined)){
+                    router.push('/user/payment?inviteCode='+inviteCode+'&projectid='+projectid, { scroll: false   })
+                }else{
+                    router.push('/user/payment', { scroll: false   })
+                }
             } else {
                 setLoading(false)
                 toast({

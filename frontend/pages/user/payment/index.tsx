@@ -5,6 +5,7 @@ import api from '@/utils/fetcher';
 import styles from "../../../src/css/signin.module.css"
 import { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 
 export default function PaymentScreen() {
@@ -24,6 +25,12 @@ export default function PaymentScreen() {
     const inviteCode = params.get('inviteCode')
 
 
+    useEffect(()=>{
+        console.log(inviteCode)
+        console.log(typeof inviteCode)
+    },[inviteCode])
+
+
     const handleToken = (token) => {
         try {
             api.post('/api/auth/stripe-pay', {
@@ -35,7 +42,8 @@ export default function PaymentScreen() {
                     const { data }= res;
                     if(data.status === "succeeded"){
                         setUser(null)
-                        if(inviteCode){
+                        if(inviteCode && (inviteCode != 'null' || inviteCode != null || inviteCode != undefined)){
+                            console.log(inviteCode)
                             router.push('/user/invitation?inviteCode='+inviteCode)
                         }else{
                             router.push('/dashboard/home/')

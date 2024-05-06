@@ -31,7 +31,6 @@ const GoalTaskSchema = new mongo.Schema({
     deadline : {
         type : Date,
         default : Date.now,
-        max : Date.now
     }
 })
 GoalTaskSchema.set('timestamps', true)

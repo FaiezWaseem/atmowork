@@ -93,7 +93,7 @@ class GoalController {
         } catch (err) {
             res.json({
                 status: false,
-                message: error.message
+                message: err.message
             })
         }
     }
