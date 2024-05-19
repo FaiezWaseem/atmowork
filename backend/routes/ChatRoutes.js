@@ -9,7 +9,7 @@ module.exports = (io) => {
     router.get('/messages/:chatid', verifyToken, ChatController.getMessages)
     router.post('/message/:chatid', verifyToken, (req,res)=> ChatController.addMessage(req,res,io))
     
-    router.delete('/message/:messageid', verifyToken, ChatController.removeMessage)
+    router.delete('/message/:messageid', verifyToken, (req , res) => ChatController.removeMessage(req,res,io))
     
     
     return router

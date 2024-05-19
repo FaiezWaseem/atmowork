@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 import {
     Stack, Flex, Text, HStack, Box, Image,
@@ -38,34 +38,36 @@ interface ChatContainerProps {
 
 const ChatContainer = ({ id }: ChatContainerProps) => {
 
-    const [chats, setChats] = useState([
-    ])
-
+    const [chats, setChats] = useState([]);
     const divRef = useRef(null);
-
-    const toast = useToast()
-
-
-
+    const toast = useToast();
+    const [isConnected, setConnected] = useState(false);
+  
+    const filterById = useCallback((id) => {
+      setChats(prevChats => prevChats.filter(chat => chat._id !== id));
+    }, []);
     useEffect(() => {
         loadInitialMessage()
     }, [id])
-
+  
     useEffect(() => {
-        socket.connect()
-        socket.on('connect', console.log);
-        socket.on('disconnect', console.log);
+      if (!isConnected) {
+        socket.connect();
+        socket.on('connect', () => setConnected(true));
+        socket.on('disconnect', () => setConnected(false));
         socket.on(`${id}-new-message`, (message) => {
-            console.log('new message', message);
-            setChats((prev) => [...prev, JSON.parse(message)])
+          setChats(prevChats => [...prevChats, JSON.parse(message)]);
         });
-
-        return () => {
-            socket.off('connect', console.log);
-            socket.off('disconnect', console.log);
-        };
-    }, [])
-
+        socket.on(`chat-remove-message`, (message) => {
+          filterById(JSON.parse(message)._id);
+        });
+      }
+  
+      return () => {
+        socket.off('connect', console.log);
+        socket.off('disconnect', console.log);
+      };
+    }, [filterById, id, isConnected]);
 
 
     const loadInitialMessage = async () => {
@@ -264,13 +266,13 @@ const FileItem = ({ file, onfileRemove }: { file: File, onfileRemove: (file: Fil
 }
 
 function copyTextToClipboard(text) {
-    navigator.clipboard.writeText(text).then(function() {
+    navigator.clipboard.writeText(text).then(function () {
         console.log('Async: Copying to clipboard was successful!');
-        
-      }, function(err) {
+
+    }, function (err) {
         console.error('Async: Could not copy text: ', err);
-      });
-  }
+    });
+}
 
 const ChatMessage = ({ message }) => {
     //@ts-ignore
@@ -280,15 +282,25 @@ const ChatMessage = ({ message }) => {
 
     const toast = useToast()
 
-    const copy = ()=>{
+    const copy = () => {
         copyTextToClipboard(message.message)
         toast({
             title: 'Copied',
             description: 'Message Copied',
-            status:'success',
+            status: 'success',
             position: 'top-right',
             duration: 2000,
         })
+    }
+
+    const deleteMessage =  async () => {
+       try {
+        
+        const { data} = await api.delete('/api/project/message/'+message._id)
+        console.log(data)
+       } catch (error) {
+        console.log(error)
+       } 
     }
 
     return <HStack justify={isSender ? 'flex-end' : 'flex-start'} my={2} >
@@ -334,12 +346,12 @@ const ChatMessage = ({ message }) => {
             {isSender &&
                 <MenuList>
                     <MenuItem onClick={copy} >Copy Text</MenuItem>
-                    <MenuItem>Delete</MenuItem>
+                    <MenuItem  onClick={deleteMessage} >Delete</MenuItem>
                 </MenuList>
             }
             {!isSender &&
                 <MenuList>
-                    <MenuItem  onClick={copy} >Copy Text</MenuItem>
+                    <MenuItem onClick={copy} >Copy Text</MenuItem>
                 </MenuList>
             }
 

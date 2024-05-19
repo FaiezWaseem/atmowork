@@ -34,11 +34,12 @@ class UserController {
 
     async updateMe(req, res) {
         try {
-            const { username , email } = req.body;
+            const { username , email , profile_pic } = req.body;
             const user = await UserModel.findOneAndUpdate({ _id: req.user }, {
                 $set: {
                   username,
-                  email
+                  email,
+                  profile_pic
                 }})
               res.json({ status : true  , user})
         } catch (error) {

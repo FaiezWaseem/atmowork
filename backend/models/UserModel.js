@@ -43,6 +43,11 @@ const UserSchema = new mongo.Schema({
     membership_plan_id: {
         type: mongo.Types.ObjectId,
         ref: 'member_ship'
+    },
+    profile_pic : {
+        type : String,
+        default : 'https://placehold.co/100x100?text=No+Profile',
+        required : false
     }
 })
 UserSchema.set('timestamps', true)

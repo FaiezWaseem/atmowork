@@ -26,11 +26,14 @@ class ChatController {
             res.status(404).json({ message: error.message, "success": false })
         }
     }
-    async removeMessage(req, res) {
+    async removeMessage(req, res , io) {
         try {
             const message = await Chat.findOneAndDelete({ _id: req.params.messageid, creatorid: req.user });
             if (!message) {
                 return res.status(404).json({ message: 'Message Not Found', "success": false })
+            }
+            if(io){
+                io.emit(`chat-remove-message`, JSON.stringify(message));
             }
             res.status(200).json({ message: 'Message Deleted', "success": true, message });
         }catch (error) {

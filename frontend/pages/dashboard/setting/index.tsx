@@ -24,45 +24,80 @@ import { useRouter } from 'next/router'
 
 export default function UserProfileEdit() {
 
-    //@ts-ignore
-    const user = useUser(state => state.users)
-    //@ts-ignore
-    const setUser = useUser(state => state.setUser)
+  //@ts-ignore
+  const user = useUser(state => state.users)
+  //@ts-ignore
+  const setUser = useUser(state => state.setUser)
 
 
-    const [username , setUsername] = useState(user?.username)
-    const [email , setEmail] = useState(user?.email)
+  const [username, setUsername] = useState(user?.username)
+  const [email, setEmail] = useState(user?.email)
 
-    const toast = useToast()
+  const toast = useToast()
 
-    const navigate = useRouter()
+  const navigate = useRouter()
 
-    useEffect(()=>{
-        if(!user){
-            api.get('/api/user/me').then(res=>{
-                setUser(res.data)
-            })
-        }
-
-    },[user])
-
-    const onSave = async () => {
-        const res = await api.put('/api/user/', {
-            username,
-            email,
-        })
-        if (res.data.status) {
-            toast({
-                title: 'Success',
-                description: 'User profile updated successfully',
-                status:'success',
-                duration: 4000,
-                isClosable: true,
-                position :'top'
-            })
-            setUser({...user , email , username})
-        }
+  useEffect(() => {
+    if (!user) {
+      api.get('/api/user/me').then(res => {
+        setUser(res.data)
+      })
     }
+    console.log(user)
+
+  }, [user])
+
+  const onSave = async () => {
+    const res = await api.put('/api/user/', {
+      username,
+      email,
+    })
+    if (res.data.status) {
+      toast({
+        title: 'Success',
+        description: 'User profile updated successfully',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+        position: 'top'
+      })
+      setUser({ ...user, email, username })
+    }
+  }
+
+  const selectFile = () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    console.log(fileInput);
+    fileInput.onchange = async () => {
+      const file = fileInput.files[0];
+      console.log(file);
+
+      if (file) {
+        const res = await uploadFile([file])
+        if (res.status) {
+          console.log(res.files);
+          const result = await api.put('/api/user/', {
+            profile_pic: res.files[0].filepath,
+          })
+          setUser({ ...user, email, profile_pic: process.env.NEXT_PUBLIC_backendURL +'/'+ res.files[0].filepath })
+        }
+      }
+    };
+
+    document.body.appendChild(fileInput);
+    fileInput.click();
+  };
+
+  const uploadFile = async (files) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('files', file);
+    })
+    const { data } = await api.post(`/api/upload/project/file/profile`, formData)
+    return data
+  }
 
   return (
     <Flex
@@ -86,20 +121,12 @@ export default function UserProfileEdit() {
           <FormLabel>User Icon</FormLabel>
           <Stack direction={['column', 'row']} spacing={6}>
             <Center>
-              <Avatar size="xl" src="https://bit.ly/sage-adebayo">
-                <AvatarBadge
-                  as={IconButton}
-                  size="sm"
-                  rounded="full"
-                  top="-10px"
-                  colorScheme="red"
-                  aria-label="remove Image"
-                  icon={<SmallCloseIcon />}
-                />
+              <Avatar size="xl" src={user?.profile_pic} >
+
               </Avatar>
             </Center>
             <Center w="full">
-              <Button w="full">Change Icon</Button>
+              <Button w="full" onClick={selectFile} >Change Icon</Button>
             </Center>
           </Stack>
         </FormControl>
@@ -132,10 +159,10 @@ export default function UserProfileEdit() {
             _hover={{
               bg: 'red.500',
             }}
-             onClick={() => {
-                navigate.back()
-             }}
-            >
+            onClick={() => {
+              navigate.back()
+            }}
+          >
             Go back
           </Button>
           <Button
@@ -146,7 +173,7 @@ export default function UserProfileEdit() {
               bg: 'blue.500',
             }}
             onClick={onSave}
-            >
+          >
             SAVE
           </Button>
         </Stack>
