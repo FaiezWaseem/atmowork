@@ -1,0 +1,7 @@
+
+
+- Delete Chat Message
+- Delete MindMap
+- Edit Goal Task
+- Delete Goal Task
+- Upload User Profile Picture

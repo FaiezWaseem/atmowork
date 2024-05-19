@@ -20,6 +20,18 @@ import useUser from '@/providers/userStore';
 import moment from 'moment';
 import { socket } from '@/utils/socket';
 
+import {
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuDivider,
+} from '@chakra-ui/react'
+import { CiMenuKebab } from "react-icons/ci";
+
 interface ChatContainerProps {
     id: string
 }
@@ -33,7 +45,7 @@ const ChatContainer = ({ id }: ChatContainerProps) => {
 
     const toast = useToast()
 
-  
+
 
     useEffect(() => {
         loadInitialMessage()
@@ -44,8 +56,8 @@ const ChatContainer = ({ id }: ChatContainerProps) => {
         socket.on('connect', console.log);
         socket.on('disconnect', console.log);
         socket.on(`${id}-new-message`, (message) => {
-          console.log('new message', message);
-          setChats((prev) => [...prev, JSON.parse(message)])
+            console.log('new message', message);
+            setChats((prev) => [...prev, JSON.parse(message)])
         });
 
         return () => {
@@ -102,7 +114,8 @@ const ChatInput = ({ selectedFiles, setSelectedFiles, id }: ChatInputProps) => {
     const sendMessage = async () => {
         try {
 
-            if (message.length == 0 && selectedFiles.length == 0) {
+            // First Check if there is a message written
+            if (message.length == 0) {
                 toast({
                     title: 'Error',
                     description: 'Message is empty',
@@ -113,9 +126,34 @@ const ChatInput = ({ selectedFiles, setSelectedFiles, id }: ChatInputProps) => {
                 return;
             }
 
+            // the Remove more than 10 Files as we support max 10files upload at a time
+            if (selectedFiles.length > 10) {
+                toast({
+                    title: 'Error',
+                    description: `Maximum 10 files Can Be Uploaded, Please Remove ${selectedFiles.length - 10} Files`,
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                })
+                return;
+            }
+
+            // Then start Uploading Files if there are any
+            let files = []
+            if (selectedFiles.length > 0) {
+                const response = await uploadFile(selectedFiles)
+                console.log(response)
+                if (response.status) {
+                    files = response.files
+                }
+            }
+
+
+
 
             const { data } = await api.post(`/api/project/message/${id}`, {
                 message,
+                files
             })
 
             const { success, message: newMessage } = data
@@ -123,8 +161,6 @@ const ChatInput = ({ selectedFiles, setSelectedFiles, id }: ChatInputProps) => {
             if (success) {
                 setMessage('')
                 setSelectedFiles([])
-
-                console.log(newMessage)
             }
 
 
@@ -138,6 +174,15 @@ const ChatInput = ({ selectedFiles, setSelectedFiles, id }: ChatInputProps) => {
                 isClosable: true,
             })
         }
+    }
+
+    const uploadFile = async (files) => {
+        const formData = new FormData();
+        files.forEach((file) => {
+            formData.append('files', file);
+        })
+        const { data } = await api.post(`/api/upload/project/file/${id}`, formData)
+        return data
     }
 
     const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -218,22 +263,92 @@ const FileItem = ({ file, onfileRemove }: { file: File, onfileRemove: (file: Fil
     </HStack>
 }
 
+function copyTextToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        console.log('Async: Copying to clipboard was successful!');
+        
+      }, function(err) {
+        console.error('Async: Could not copy text: ', err);
+      });
+  }
 
 const ChatMessage = ({ message }) => {
     //@ts-ignore
     const user = useUser(state => state.users)
-    console.log(user)
     const isSender = message.creatorid?._id === user?._id
-    const isImage = false
+
+
+    const toast = useToast()
+
+    const copy = ()=>{
+        copyTextToClipboard(message.message)
+        toast({
+            title: 'Copied',
+            description: 'Message Copied',
+            status:'success',
+            position: 'top-right',
+            duration: 2000,
+        })
+    }
+
     return <HStack justify={isSender ? 'flex-end' : 'flex-start'} my={2} >
-        <Box boxShadow={'sm'} bg={'#FFF'} p={1} width={'auto'} maxW={'40%'} borderColor={'gray.100'} borderRadius={3} borderWidth={'1.5px'} >
+        <Box boxShadow={'sm'} bg={'#FFF'} p={1} width={'auto'} maxW={'90%'} borderColor={'gray.100'} borderRadius={3} borderWidth={'1.5px'} >
             <Text fontWeight={'400'} fontSize={'sm'} fontStyle={'italic'} color={'gray.600'} >{isSender ? 'You' : message?.creatorid?.username}</Text>
-            {isImage ? <Image src={'https://picsum.photos/id/1015/200/300'} maxH={150} width={'auto'} /> : null}
+            <HStack >
+                {message.files.map(file => {
+                    const fileUrl = `${process.env.NEXT_PUBLIC_backendURL}/${file.filepath}`
+                    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+                        return <Image src={fileUrl} maxH={150} width={'auto'}
+                            onClick={() => {
+                                window.open(fileUrl)
+                            }} />
+                    } else if (file.mimetype == 'video/mp4' || file.mimetype == 'video/webm' || file.mimetype == 'video/mov') {
+                        return <video src={fileUrl} width={'400px'} height={150} controls onClick={() => {
+                            window.open(fileUrl)
+                        }} />
+                    } else {
+                        return <HStack border={`1px solid gray`} borderRadius={3} p={2} maxW={80}
+                            onClick={() => {
+                                window.open(fileUrl)
+                            }}
+                            cursor={'pointer'}
+                        >
+                            <Stack width={'100%'}>
+                                <HStack justifyContent={'space-between'} width={'100%'} >
+                                    <FaFile />
+                                </HStack>
+                                <Text>{file.filename}</Text>
+                                <Text>{filesize(file.size)}</Text>
+                            </Stack>
+                        </HStack>
+                    }
+                })}
+            </HStack>
             <Text fontSize={'md'} >{message?.message}</Text>
             <Text fontSize={'smaller'} fontStyle={'italic'} color={'gray.400'} >{moment(message?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}</Text>
         </Box>
+        <Menu>
+            <MenuButton >
+                <CiMenuKebab />
+            </MenuButton>
+            {isSender &&
+                <MenuList>
+                    <MenuItem onClick={copy} >Copy Text</MenuItem>
+                    <MenuItem>Delete</MenuItem>
+                </MenuList>
+            }
+            {!isSender &&
+                <MenuList>
+                    <MenuItem  onClick={copy} >Copy Text</MenuItem>
+                </MenuList>
+            }
+
+        </Menu>
     </HStack>
 }
+
+
+
 
 
 export {

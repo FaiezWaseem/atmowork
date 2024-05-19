@@ -22,6 +22,7 @@ const io = new Server(server, {
 const AuthRouter = require('./routes/AuthRoute')
 const UserRouter = require('./routes/UserRoutes')
 const ChatsRouter = require('./routes/ChatRoutes')(io)
+const uploadController = require('./controllers/UploadController')
 
 
 
@@ -42,6 +43,7 @@ app.use(express.urlencoded({ extended : true ,  limit: '50mb'}))
 app.use('/api/auth',AuthRouter)
 app.use('/api/user' , UserRouter)
 app.use('/api/project' , ChatsRouter )
+app.use('/api/upload', uploadController)  
 
 io.on('connection', (socket) => {
   console.log('a user connected' , socket.id);

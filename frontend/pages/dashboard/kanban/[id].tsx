@@ -353,7 +353,6 @@ const KanbanLane = ({ title, items, color, removeCard, project, loadFeatures }) 
                         removeCard={removeCard}
                         project={project}
                         loadFeatures={loadFeatures}
-
                     />
                 ))}
 
