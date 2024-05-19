@@ -29,6 +29,16 @@ import {
 } from '@chakra-ui/react'
 import initialdata from './initialdata'
 
+import { GoKebabHorizontal } from "react-icons/go";
+
+import {
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+} from '@chakra-ui/react'
+
+
 export default function MindMapPage() {
 
     //@ts-ignore
@@ -38,9 +48,9 @@ export default function MindMapPage() {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
 
-    const [ title , setTitle ] = useState('')
+    const [title, setTitle] = useState('')
 
-    const toast  = useToast()
+    const toast = useToast()
 
     useEffect(() => {
         loadMindMaps()
@@ -52,42 +62,65 @@ export default function MindMapPage() {
             setMindMaps(data.mindmaps)
         }
     }
-    const AddMindMap = async () =>{
+    const AddMindMap = async () => {
         const { data } = await api.post('/api/user/mindmap', {
             title,
-            data : JSON.stringify(initialdata)
+            data: JSON.stringify(initialdata)
         })
         const { status } = data
-        if(status){
+        if (status) {
             toast({
-                title : 'New MindMap Created',
-                position : 'top-right',
-                duration : 2500
+                title: 'New MindMap Created',
+                position: 'top-right',
+                duration: 2500
             })
             setMindMaps([])
             loadMindMaps()
             setTitle('')
             onClose()
-        }else{
+        } else {
             toast({
-                title : 'Failed To Create MindMap',
-                position : 'top-right',
-                duration : 2500,
-                status : 'error'
+                title: 'Failed To Create MindMap',
+                position: 'top-right',
+                duration: 2500,
+                status: 'error'
+            })
+        }
+    }
+
+
+    const deleteMindMap = async (mindmap: MindMapType) => {
+        try {
+            const { data } = await api.delete(`/api/user/mindmap/${mindmap._id}`)
+            const { status } = data
+            if (status) {
+                setMindMaps(mindmaps.filter((m : MindMapType) => m._id!== mindmap._id))
+                toast({
+                    title: 'MindMap Deleted',
+                    position: 'top-right',
+                    duration: 2500
+                })
+            }
+        } catch (error) {
+            toast({
+                title: 'Failed To Delete MindMap',
+                position: 'top-right',
+                duration: 2500,
+                status: 'error'
             })
         }
     }
 
     return <Stack>
         <SideBar>
-        <Button onClick={onOpen} bg={'app.btnPurple'} color={'white'}  m={4}>Add New MindMap</Button>
+            <Button onClick={onOpen} bg={'app.btnPurple'} color={'white'} m={4}>Add New MindMap</Button>
             <Flex flexWrap={'wrap'} p={4} gap={5}>
                 {mindmaps.map(mindmap => {
-                    return <MinMapCard mindmap={mindmap} key={mindmap._id} />
+                    return <MinMapCard mindmap={mindmap} key={mindmap._id} deleteMindMap={deleteMindMap} />
                 })}
             </Flex>
 
-            
+
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
@@ -97,9 +130,9 @@ export default function MindMapPage() {
                     <ModalBody>
                         <FormControl>
                             <FormLabel>Title</FormLabel>
-                            <Input onChange={(e)=> setTitle(e.target.value)} />
+                            <Input onChange={(e) => setTitle(e.target.value)} />
                         </FormControl>
-                     
+
                     </ModalBody>
 
                     <ModalFooter>
@@ -115,19 +148,22 @@ export default function MindMapPage() {
 }
 
 
-const MinMapCard = ({ mindmap }: { mindmap: MindMapType }) => {
+const MinMapCard = ({ mindmap  , deleteMindMap }: { mindmap: MindMapType , deleteMindMap: (mindmap: MindMapType) => void }) => {
+
+  
+
     return <Center py={12}>
-        <Link href={`/dashboard/mindmap/${mindmap._id}`} >
-            <Box
-                role={'group'}
-                p={6}
-                maxW={'330px'}
-                w={'full'}
-                bg={useColorModeValue('white', 'gray.800')}
-                boxShadow={'2xl'}
-                rounded={'lg'}
-                pos={'relative'}
-                zIndex={1}>
+        <Box
+            role={'group'}
+            p={6}
+            maxW={'330px'}
+            w={'full'}
+            bg={useColorModeValue('white', 'gray.800')}
+            boxShadow={'2xl'}
+            rounded={'lg'}
+            pos={'relative'}
+            zIndex={1}>
+            <Link href={`/dashboard/mindmap/${mindmap._id}`} >
                 <Box
                     rounded={'lg'}
                     mt={-12}
@@ -159,13 +195,24 @@ const MinMapCard = ({ mindmap }: { mindmap: MindMapType }) => {
                         alt="#"
                     />
                 </Box>
-                <Stack align={'center'}>
+            </Link>
+            <Stack align={'center'}>
+                <Link href={`/dashboard/mindmap/${mindmap._id}`} >
                     <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
                         {mindmap.title}
                     </Heading>
-                </Stack>
-            </Box>
-        </Link>
+                </Link>
+                <Menu>
+                    <MenuButton >
+                        <GoKebabHorizontal />
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem onClick={()=> deleteMindMap(mindmap)} >Delete</MenuItem>
+                    </MenuList>
+                </Menu>
+            </Stack>
+        </Box>
+
     </Center>
 }
 
