@@ -37,6 +37,7 @@ export default function Goals() {
             const result = await api.get('/api/user/goals');
             const { data } = result;
             if (data.status) {
+                console.log(data?.goals)
                 setGoals(data?.goals)
             } else {
                 toast({
@@ -227,8 +228,8 @@ const GoalCard = ({ goal , deleteGoal  }) => {
             </Menu>
         </HStack>
         <Center onClick={() => navigate.push(`/dashboard/goal/${goal?._id}`)} >
-            <CircularProgress value={goal?.progress} size='60px' thickness='8px' >
-                <CircularProgressLabel>{goal?.progress}%</CircularProgressLabel>
+            <CircularProgress value={((Number(goal?.progress) / Number(goal?.targets)) * 100) || 0} size='60px' thickness='8px' >
+                <CircularProgressLabel>{((Number(goal?.progress) / Number(goal?.targets)) * 100) || 0}%</CircularProgressLabel>
             </CircularProgress>
         </Center>
         <Center lineHeight={0.5} onClick={() => navigate.push(`/dashboard/goal/${goal?._id}`)} >

@@ -10,6 +10,7 @@ const verifyToken = require('../middleware/authMiddleware')
 
 router.get('/' , verifyToken , UserController.getMe)
 router.put('/' , verifyToken , UserController.updateMe)
+router.get('/notifications' , verifyToken , UserController.getAllNotifications)
 
 
 // Goals

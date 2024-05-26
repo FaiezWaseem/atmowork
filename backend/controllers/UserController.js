@@ -1,7 +1,7 @@
 const UserModel = require('../models/UserModel')
 const ProjectModel = require('../models/ProjectModel')
 const GoalsModel = require('../models/GoalsModel')
-
+const NotificationModel = require('../models/NotificationModel')
 
 class UserController {
 
@@ -49,6 +49,21 @@ class UserController {
             })
         }
 
+    }
+
+    async getAllNotifications(req, res){
+        try {
+            const notifications = await NotificationModel.find({ user: req.user }).sort({ createdAt: -1 }).limit(10);
+            res.json({
+                status: true,
+                notifications
+            })
+        } catch (error) {
+            res.json({
+                status: false,
+                message: error.message
+            })
+        }
     }
 }   
 

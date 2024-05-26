@@ -86,6 +86,7 @@ class GoalController {
                 userid: req.user,
                 goalid: req.params.id,
             })
+            await GoalsModel.findByIdAndUpdate(req.params.id, { $inc: { targets: 1 } });
             res.json({
                 status: true,
                 task
@@ -100,6 +101,12 @@ class GoalController {
     async updateTask(req, res) {
         try {
             const task = await GoalTaskModel.findByIdAndUpdate(req.params.id, req.body)
+            const { status } = req.body
+
+            if(status === 'completed') {
+                await GoalsModel.findByIdAndUpdate(task.goalid, { $inc: { progress: 1 } });
+            }
+
             res.json({
                 status: true,
                 task
@@ -107,16 +114,20 @@ class GoalController {
         } catch (err) {
             res.json({
                 status: false,
-                message: error.message
+                message: err.message
             })
         }
     }
     async deleteTask(req, res) {
         try {
-            const result = await GoalTaskModel.deleteOne({ _id: req.params.id, userid: req.user });
+            const goal = await GoalTaskModel.findById(req.params.id)
+            await GoalsModel.findByIdAndUpdate(goal.goalid, { $inc: { targets: -1 } });
+
+            await goal.deleteOne()
+
             res.json({
-                status: result.deletedCount ? true : false,
-                message: result.deletedCount ? 'Task Deleted' : 'Failed To Delete'
+                status: true,
+                message:'Task Deleted'
             })
         } catch (error) {
             res.json({

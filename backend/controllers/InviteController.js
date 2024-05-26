@@ -5,6 +5,8 @@ const sendMail = require('../utils/mail')
 const crypto = require('crypto')
 const utils = require('../utils/queries/index')
 
+const NotificationModel = require('../models/NotificationModel')
+
 class InviteController {
     async inviteUserToProject(req, res) {
         try {
@@ -68,6 +70,7 @@ class InviteController {
                     message: 'Invitation Already Sended!'
                 })
             }
+           
 
 
             const uniqueCode = crypto.randomBytes(8).toString('hex');
@@ -81,6 +84,11 @@ class InviteController {
                 inviteEmail: email
             })
 
+            await NotificationModel.create({
+                user: userId,
+                title: `${isProjectOwner?.creatorid?.username} project invitation is Sent`,
+                description : `${isProjectOwner?.creatorid?.username} you will be informed once accepted by ${email}`,
+            })
 
             sendMail(email, 'Project Invitation | ATMOWORK', `
                   <!DOCTYPE html>
@@ -197,6 +205,12 @@ class InviteController {
             if(status === 'approved'){
                 
                 const isAlreadyAMember = project.members.includes(userId)
+
+                await NotificationModel.create({
+                    user: project.creatorid,
+                    title: 'Invite Accepted', 
+                    description :  ` ${projectOwner.username} Your Project Invitation is Accepted By ${user.username}`,
+                })
                 
                 if (isAlreadyAMember) {
                     return res.json({

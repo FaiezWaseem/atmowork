@@ -121,8 +121,7 @@ export default function UserProfileEdit() {
           <FormLabel>User Icon</FormLabel>
           <Stack direction={['column', 'row']} spacing={6}>
             <Center>
-              <Avatar size="xl" src={user?.profile_pic} >
-
+              <Avatar size="xl" src={ user?.profile_pic?.includes('localhost')? user?.profile_pic : process.env.NEXT_PUBLIC_backendURL + '/' +  user?.profile_pic} >
               </Avatar>
             </Center>
             <Center w="full">

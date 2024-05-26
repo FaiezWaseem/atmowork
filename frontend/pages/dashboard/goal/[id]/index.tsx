@@ -17,9 +17,15 @@ import api from "@/utils/fetcher";
 import useUser from "@/providers/userStore";
 import moment from "moment";
 
+import { MdEditNote } from "react-icons/md";
+import { FaTrash } from "react-icons/fa6";
+import { set } from "js-cookie";
+
 export default function Goal() {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
+
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
     const params = useParams();
     const { id } = params;
@@ -41,6 +47,8 @@ export default function Goal() {
 
     const [completedTask, setCompletedTask] = useState(0)
     const [incompleteTask, setIncompleteTask] = useState(0)
+
+    const [task , setTask] = useState<any>({})
 
     const [progress, setProgress] = useState(0)
 
@@ -106,45 +114,45 @@ export default function Goal() {
                 })
             }
 
-            const { data } = await api.post(`/api/user/goal/${id}/task` , {
-                title : taskTitle,
-                description : taskDescription,
-                status : taskStatus , 
+            const { data } = await api.post(`/api/user/goal/${id}/task`, {
+                title: taskTitle,
+                description: taskDescription,
+                status: taskStatus,
                 deadline
             })
 
-            const {  status , task  } = data;
+            const { status, task } = data;
 
-            if(status){
-                setTasks(prev => [...tasks , task])
+            if (status) {
+                setTasks(prev => [...tasks, task])
                 setTaskTitle('')
                 setTaskDescription('')
                 setDeadline(dateInitial)
                 toast({
-                    title : 'Task Created',
-                    position : 'top-right',
-                    duration : 3000,
-                    status : 'success',
-                    isClosable : true
+                    title: 'Task Created',
+                    position: 'top-right',
+                    duration: 3000,
+                    status: 'success',
+                    isClosable: true
                 })
-            }else{
+            } else {
                 toast({
-                    title : 'Task Creation Failed',
-                    position : 'top-right',
-                    duration : 3000,
-                    status : 'error',
-                    isClosable : true
+                    title: 'Task Creation Failed',
+                    position: 'top-right',
+                    duration: 3000,
+                    status: 'error',
+                    isClosable: true
                 })
             }
 
         } catch (err) {
             toast({
-                title : 'Network Error',
-                description : err.message,
-                position : 'top-right',
-                duration : 3000,
-                status : 'error',
-                isClosable : true
+                title: 'Network Error',
+                description: err.message,
+                position: 'top-right',
+                duration: 3000,
+                status: 'error',
+                isClosable: true
             })
         }
     }
@@ -194,6 +202,97 @@ export default function Goal() {
             greeting = "Good evening";
         }
         return greeting;
+    }
+
+
+    const onEditTask = async (task) => {
+        console.log(task)
+        setTaskTitle(task.title)
+        setTaskDescription(task.description)
+        setTaskStatus(task.status)
+        setTask(task)
+        setIsEditModalOpen(prev => !prev)
+    }
+
+    const updateTask = async () => {
+        try {
+            const updateObj = {
+                title: taskTitle,
+                description: taskDescription,
+                status: taskStatus,
+                deadline
+            }
+            const { data } = await api.put(`/api/user/goal/task/${task._id}`, updateObj )
+            const { status } = data
+            if (status) {
+                setTasks(prev => prev.map(t => t._id === task._id ? {...task , ...updateObj} : t))
+                setTaskTitle('')
+                setTaskDescription('')
+                setDeadline(dateInitial)
+                setIsEditModalOpen(prev => !prev)
+                toast({
+                    title: 'Task Updated',
+                    position: 'top-right',
+                    duration
+                        : 3000,
+                    status: 'success',
+                })
+            }
+        } catch (err) {
+            toast({
+                title: 'Network Error',
+                description: err.message,
+                position: 'top-right',
+                duration: 3000,
+                status: 'error',
+                isClosable: true
+            })
+        }
+    }
+
+    const onDeleteTask = async (task) => {
+        try {
+            const { data } = await api.delete(`/api/user/goal/task/${task._id}`)
+
+            const { status } = data
+
+            if (status) {
+                setTasks(tasks.filter(t => t._id !== task._id))
+                toast({
+                    title: 'Task Deleted',
+                    position: 'top-right',
+                    duration: 3000,
+                    status: 'success',
+                    isClosable: true
+                })
+                console.log(tasks)
+            } else {
+                toast({
+                    title: 'Task Deletion Failed',
+                    position: 'top-right',
+                    duration: 3000,
+                    status: 'error',
+                    isClosable: true
+                })
+            }
+
+        } catch (error) {
+            toast({
+                title: 'Network Error',
+                description: error.message,
+                position: 'top-right',
+                duration: 3000,
+                status: 'error',
+                isClosable: true
+            })
+        }
+    }
+
+    const onCancel = () => {
+        setTaskDescription('')
+        setTaskTitle('')
+        setTaskStatus('')
+        setIsEditModalOpen(prev => !prev)
     }
 
     return (
@@ -266,7 +365,7 @@ export default function Goal() {
                     {/* Goal Cards  */}
                     <HStack p={4} flexWrap={'wrap'} justify={'space-evenly'} gap={3} >
                         {tasks.map((task, index) => (
-                            <GoalCard key={index} task={task} />
+                            <GoalCard key={index} task={task} onDeleteTask={onDeleteTask} onEditTask={onEditTask} />
                         ))}
                     </HStack>
                     {/* Add Modal */}
@@ -323,18 +422,80 @@ export default function Goal() {
                             </ModalFooter>
                         </ModalContent>
                     </Modal>
+                    {/* Edit Modal */}
+                    <Modal
+                        isOpen={isEditModalOpen}
+                        onClose={onCancel}
+                    >
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Create new Goal Task</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody pb={6}>
+                                <FormControl>
+                                    <FormLabel color={'gray.500'}>Title</FormLabel>
+                                    <Input size={'sm'} placeholder='Title'
+                                        value={taskTitle}
+                                        onChange={(e) => setTaskTitle(e.target.value)}
+                                    />
+                                </FormControl>
+
+                                <FormControl mt={4}>
+                                    <FormLabel color={'gray.500'} >Description</FormLabel>
+                                    <Input size={'sm'} placeholder='Description'
+                                        value={taskDescription}
+                                        onChange={(e) => setTaskDescription(e.target.value)}
+                                    />
+                                </FormControl>
+                                <FormControl mt={4}>
+                                    <FormLabel color={'gray.500'} >Progress Status</FormLabel>
+                                    <Select size={'sm'}
+                                        value={taskStatus}
+                                        onChange={(e) => setTaskStatus(e.target.value)}
+                                    >
+                                        <option value="inprogress">InProgress</option>
+                                        <option value="completed">Completed</option>
+                                    </Select>
+                                </FormControl>
+                                <FormControl mt={4}>
+                                    <FormLabel color={'gray.500'} >Deadline</FormLabel>
+                                    <SingleDatepicker
+                                        name="start date"
+                                        date={deadline}
+                                        onDateChange={setDeadline}
+                                    />
+                                </FormControl>
+                            </ModalBody>
+
+                            <ModalFooter>
+                                <Button colorScheme='blue' mr={3} px={6} rounded={2} onClick={updateTask} >
+                                    update
+                                </Button>
+                                <Button onClick={onCancel} px={6} rounded={2} >Cancel</Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal>
                 </SideBar>
             </Stack>
         </PageLayout>
     )
 }
 
-const GoalCard = ({ task }) => {
+
+
+
+const GoalCard = ({ task, onEditTask, onDeleteTask }) => {
     return (
         <Stack width={'30%'} boxShadow={'md'} p={4} m={0} rounded={'md'} bg={'white'} >
-            <Box>
-                <Badge variant='outline' colorScheme='orange' >{task?.status}</Badge>
-            </Box>
+            <HStack justify={'space-between'} >
+                <Box>
+                    <Badge variant='outline' colorScheme='orange' >{task?.status}</Badge>
+                </Box>
+                <HStack cursor={'pointer'}>
+                    <MdEditNote size={22} color="blue" onClick={() => onEditTask(task)} />
+                    <FaTrash color="red" onClick={() => onDeleteTask(task)} />
+                </HStack>
+            </HStack>
             <Text>{task?.title}</Text>
             <Text color={'gray.500'} fontSize={'smaller'} >DeadLine : {moment(task?.deadline).format('DD MMMM YYYY')}</Text>
         </Stack>
