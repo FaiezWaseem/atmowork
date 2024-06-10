@@ -1,6 +1,7 @@
 const ProjectModel = require('../models/ProjectModel')
 const FeatureModel = require('../models/featuresModel')
 const UserModel = require('../models/UserModel')
+const NotificationModel = require('../models/NotificationModel')
 
 const utils = require('../utils/queries/index')
 
@@ -115,7 +116,20 @@ class ProjectController {
     async updateFeature(req, res) {
         try {
             const response = await FeatureModel.updateOne({ _id: req.params.id }, { $set: req.body }, { new: true });
-            console.log(response);
+            
+            const f = await FeatureModel.findById(req.params.id).populate( [ 'creatorid' , 'assigned'] )
+
+            console.log(req.body)
+
+            const { status } = req.body;
+            if(status === 'done'){
+                await NotificationModel.create({
+                    user: req.user,
+                    title: `Project Feature Completed`,
+                    description : `Your Feature ${f.title} is Completed`,
+                })
+            }
+
             res.json({ status: !!response.modifiedCount , message: 'updated ', response })
         } catch (error) {
             res.json({ status: false, message: error.message })

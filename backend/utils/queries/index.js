@@ -12,7 +12,7 @@ let plansFeature = {
     'Standard': {
         projects: 10,
         team: 5,
-        live : false,
+        live : true,
     },
     'Premium': {
         projects: 50,
@@ -45,6 +45,7 @@ exports.hasExceededProjectCreateLimit = async (req) => {
 exports.canCreateMeet = async (req) => {
     try {
         const user = await User.findOne({ _id: req.user }, { password: 0 }).populate('membership_plan_id');
+        console.log(user , user.account_membership)   
         if (user) {
             return plansFeature[user.account_membership].live;
         }else{
