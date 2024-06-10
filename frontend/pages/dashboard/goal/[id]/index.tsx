@@ -311,7 +311,7 @@ export default function Goal() {
                             </Box>
                             <Text fontSize={'3xl'} fontWeight={'bold'} color={'gray.600'} >{goal?.title}</Text>
                             <CircularProgress value={progress} color='green.400'>
-                                <CircularProgressLabel>{progress}%</CircularProgressLabel>
+                                <CircularProgressLabel>{progress.toFixed(2)}%</CircularProgressLabel>
                             </CircularProgress>
                         </HStack>
 

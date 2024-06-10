@@ -218,9 +218,7 @@ const GoalCard = ({ goal , deleteGoal  }) => {
                     variant='outline'
                 />
                 <MenuList>
-                    <MenuItem icon={<CiEdit />}>
-                        Rename
-                    </MenuItem>
+                  
                     <MenuItem icon={<AiFillDelete />} color={'red'} onClick={()=> deleteGoal(goal)} >
                         Delete
                     </MenuItem>
@@ -229,7 +227,7 @@ const GoalCard = ({ goal , deleteGoal  }) => {
         </HStack>
         <Center onClick={() => navigate.push(`/dashboard/goal/${goal?._id}`)} >
             <CircularProgress value={((Number(goal?.progress) / Number(goal?.targets)) * 100) || 0} size='60px' thickness='8px' >
-                <CircularProgressLabel>{((Number(goal?.progress) / Number(goal?.targets)) * 100) || 0}%</CircularProgressLabel>
+                <CircularProgressLabel>{((Number(goal?.progress) / Number(goal?.targets)) * 100).toFixed(2) || 0}%</CircularProgressLabel>
             </CircularProgress>
         </Center>
         <Center lineHeight={0.5} onClick={() => navigate.push(`/dashboard/goal/${goal?._id}`)} >
