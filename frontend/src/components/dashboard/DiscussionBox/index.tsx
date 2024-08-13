@@ -311,15 +311,19 @@ const ChatMessage = ({ message }) => {
                     const fileUrl = `${process.env.NEXT_PUBLIC_backendURL}/${file.filepath}`
                     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
                         return <Image src={fileUrl} maxH={150} width={'auto'}
+                          key={file.filepath}
+                          onClick={() => {
+                              window.open(fileUrl)
+                            }} />
+                        } else if (file.mimetype == 'video/mp4' || file.mimetype == 'video/webm' || file.mimetype == 'video/mov') {
+                            return <video src={fileUrl} width={'400px'} height={150} controls 
+                            key={file.filepath}
                             onClick={() => {
                                 window.open(fileUrl)
                             }} />
-                    } else if (file.mimetype == 'video/mp4' || file.mimetype == 'video/webm' || file.mimetype == 'video/mov') {
-                        return <video src={fileUrl} width={'400px'} height={150} controls onClick={() => {
-                            window.open(fileUrl)
-                        }} />
-                    } else {
-                        return <HStack border={`1px solid gray`} borderRadius={3} p={2} maxW={80}
+                        } else {
+                            return <HStack border={`1px solid gray`} borderRadius={3} p={2} maxW={80}
+                            key={file.filepath}
                             onClick={() => {
                                 window.open(fileUrl)
                             }}

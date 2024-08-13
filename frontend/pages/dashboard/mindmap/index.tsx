@@ -27,7 +27,7 @@ import {
     Input,
     Image,
 } from '@chakra-ui/react'
-import initialdata from './initialdata'
+import initialdata from '../../../src/components/initialdata'
 
 import { GoKebabHorizontal } from "react-icons/go";
 

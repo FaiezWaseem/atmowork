@@ -45,7 +45,7 @@ export default function NotificationScreen() {
             <Text fontWeight={'bold'} fontSize={22} >Notifications</Text>
         </HStack>
         {notifications.map((notification) => (
-            <Stack m={3} p={3} boxShadow={'lg'} rounded={5} >
+            <Stack m={3} p={3} boxShadow={'lg'} rounded={5} key={notification.id} >
                 <HStack>
                     <FcAdvertising />
                     <Text key={notification.id} fontStyle={'italic'} color={'gray.400'} fontSize={14} >{new Date(notification.createdAt).toDateString()}</Text>

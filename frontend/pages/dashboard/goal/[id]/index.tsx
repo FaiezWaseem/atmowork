@@ -19,7 +19,8 @@ import moment from "moment";
 
 import { MdEditNote } from "react-icons/md";
 import { FaTrash } from "react-icons/fa6";
-import { set } from "js-cookie";
+
+  
 
 export default function Goal() {
 
@@ -28,7 +29,7 @@ export default function Goal() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
     const params = useParams();
-    const { id } = params;
+    const id = params?.id ?? null
 
     const toast = useToast()
 
@@ -295,6 +296,10 @@ export default function Goal() {
         setIsEditModalOpen(prev => !prev)
     }
 
+    if(!id){
+        return <p>Loading...</p>
+    }
+
     return (
         <PageLayout
             title={`Goals | Workspace`}
@@ -309,7 +314,10 @@ export default function Goal() {
                             <Box boxShadow={'sm'} rounded={'md'} >
                                 <MdOutlineStarPurple500 size={48} color="orange" />
                             </Box>
-                            <Text fontSize={'3xl'} fontWeight={'bold'} color={'gray.600'} >{goal?.title}</Text>
+                            <Text fontSize={'3xl'} fontWeight={'bold'} color={'gray.600'} >{
+                            //@ts-ignore
+                            goal?.title
+                            }</Text>
                             <CircularProgress value={progress} color='green.400'>
                                 <CircularProgressLabel>{progress}%</CircularProgressLabel>
                             </CircularProgress>
