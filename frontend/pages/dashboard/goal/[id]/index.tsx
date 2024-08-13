@@ -319,7 +319,7 @@ export default function Goal() {
                             goal?.title
                             }</Text>
                             <CircularProgress value={progress} color='green.400'>
-                                <CircularProgressLabel>{progress}%</CircularProgressLabel>
+                                <CircularProgressLabel>{progress.toFixed(2)}%</CircularProgressLabel>
                             </CircularProgress>
                         </HStack>
 
